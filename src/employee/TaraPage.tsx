@@ -1,39 +1,81 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useConversation } from '@11labs/react';
+import { toast } from 'sonner';
 import { Loader2, Mic, MicOff, Phone, PhoneOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTenant } from '@/app/TenantContext';
 import { startTaraSession, OutOfCreditsError } from '@/services/credit-service';
 
+const AGENT_ID = import.meta.env.VITE_ELEVENLABS_AGENT_ID as string | undefined;
+
 export function TaraPage() {
   const { organization } = useTenant();
-  const [callActive, setCallActive] = useState(false);
   const [muted, setMuted] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [blockedMessage, setBlockedMessage] = useState<string | null>(null);
+  const permissionGrantedRef = useRef(false);
+
+  const conversation = useConversation({
+    micMuted: muted,
+    onError: (message) => {
+      toast.error(`Tara ran into a problem: ${message || 'The session encountered an error.'}`);
+    },
+  });
+
+  const callActive = conversation.status === 'connected';
+
+  // End the session if the user navigates away mid-call.
+  useEffect(() => {
+    return () => {
+      if (conversation.status === 'connected') {
+        conversation.endSession();
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function startCall() {
     setConnecting(true);
     setBlockedMessage(null);
     try {
       await startTaraSession(organization.orgId);
-      setCallActive(true);
-      setMuted(false);
     } catch (err) {
       if (err instanceof OutOfCreditsError) {
         setBlockedMessage(`${err.message} Contact your HR team to top up the plan.`);
-      } else {
-        // Fail open — a transient credit-check error shouldn't block support access.
-        setCallActive(true);
-        setMuted(false);
+        setConnecting(false);
+        return;
       }
+      // Fail open — a transient credit-check error shouldn't block support access.
+    }
+
+    if (!AGENT_ID) {
+      toast.error("Tara isn't connected yet. Ask your admin to set up the voice agent.");
+      setConnecting(false);
+      return;
+    }
+
+    try {
+      if (!permissionGrantedRef.current) {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+        permissionGrantedRef.current = true;
+      }
+      await conversation.startSession({ agentId: AGENT_ID });
+      setMuted(false);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Please allow microphone access to talk to Tara.';
+      toast.error(message);
     } finally {
       setConnecting(false);
     }
   }
 
-  function endCall() {
-    setCallActive(false);
+  async function endCall() {
     setMuted(false);
+    try {
+      await conversation.endSession();
+    } catch (err) {
+      console.error('Failed to end Tara session:', err);
+    }
   }
 
   return (
@@ -71,7 +113,13 @@ export function TaraPage() {
         </button>
 
         <p className="text-sm font-semibold text-[#233226]">
-          {connecting ? 'Connecting…' : callActive ? 'Tara is listening…' : 'Tap to talk'}
+          {connecting
+            ? 'Connecting…'
+            : callActive
+              ? conversation.isSpeaking
+                ? 'Tara is speaking…'
+                : 'Tara is listening…'
+              : 'Tap to talk'}
         </p>
 
         {blockedMessage && (
@@ -112,7 +160,7 @@ export function TaraPage() {
       )}
 
       <p className="max-w-sm text-[11px] leading-relaxed text-[#9AA79C]">
-        Preview. Nothing here is stored or sent anywhere.
+        Private. Nothing here is shared with your employer.
       </p>
     </div>
   );
