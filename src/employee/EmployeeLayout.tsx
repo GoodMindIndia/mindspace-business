@@ -10,8 +10,6 @@ import {
   HeartHandshake,
 } from 'lucide-react';
 import { useEmployeeAuth } from '@/app/EmployeeAuthContext';
-import { useTenant } from '@/app/TenantContext';
-import { AccentureLogo } from '@/components/AccentureLogo';
 import { cn } from '@/lib/utils';
 
 interface NavEntry {
@@ -30,32 +28,21 @@ const NAV: NavEntry[] = [
 ];
 
 export function EmployeeLayout() {
-  const { organization } = useTenant();
   const { user } = useEmployeeAuth();
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#243327] selection:bg-[#E5ECE6] font-sans">
-      {/* Slim top bar with Accenture co-branding */}
       <header className="sticky top-0 z-30 border-b border-[#EAE4D9]/80 bg-[#FAF7F2]/95 backdrop-blur-md">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
           <Link to="/app/home" className="flex items-center gap-3 hover:opacity-95 transition-opacity">
-            {/* MindSpace brand symbol */}
             <img src="/mindspace-wordmark.png" alt="MindSpace" className="h-7 w-auto object-contain" />
-
-            <span className="text-[#9AA79C] font-light text-sm">×</span>
-
-            {/* Accenture Logo badge */}
-            <AccentureLogo
-              variant="badge"
-              badgeClassName="bg-black px-2.5 py-1 text-xs rounded-md shadow-xs border border-neutral-800"
-            />
           </Link>
 
           {/* Right side profile / badge */}
           <div className="flex items-center gap-3">
             <span className="hidden md:inline-flex items-center gap-1.5 rounded-full bg-[#E8F0EA] px-3 py-1 text-[11px] font-semibold text-[#2D6A4F]">
               <Sparkles className="h-3 w-3" />
-              Accenture Wellbeing
+              Wellbeing Hub
             </span>
 
             <Link to="/app/profile" aria-label="Your profile" className="flex items-center gap-2">

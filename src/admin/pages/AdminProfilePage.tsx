@@ -17,7 +17,6 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/app/AuthContext';
 import { useTenant } from '@/app/TenantContext';
-import { AccentureLogo } from '@/components/AccentureLogo';
 import { cn } from '@/lib/utils';
 import {
   CREDIT_PLANS,
@@ -274,7 +273,7 @@ export function AdminProfilePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
             <div className="rounded-xl bg-[#FAF7F2] p-3 border border-[#EAE4D9] flex flex-col gap-0.5">
               <span className="text-[10px] font-bold uppercase text-[#78897B]">Organization</span>
-              <span className="text-xs font-semibold text-[#243327]">Accenture Global Wellbeing Hub</span>
+              <span className="text-xs font-semibold text-[#243327]">{organization.name}</span>
             </div>
             <div className="rounded-xl bg-[#FAF7F2] p-3 border border-[#EAE4D9] flex flex-col gap-0.5">
               <span className="text-[10px] font-bold uppercase text-[#78897B]">Role</span>

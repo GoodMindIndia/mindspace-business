@@ -12,9 +12,7 @@ import {
   CreditCard,
 } from 'lucide-react';
 import { useAuth } from '@/app/AuthContext';
-import { useTenant } from '@/app/TenantContext';
 import { ReportProvider } from '@/admin/ReportContext';
-import { AccentureLogo } from '@/components/AccentureLogo';
 import { cn } from '@/lib/utils';
 
 interface NavEntry {
@@ -45,7 +43,6 @@ export function AdminLayout() {
 }
 
 function AdminLayoutContent() {
-  const { organization } = useTenant();
   const { user, signOut } = useAuth();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -62,9 +59,6 @@ function AdminLayoutContent() {
         <Link to="/" className="flex items-center gap-2">
           <img src="/mindspace-wordmark.png" alt="MindSpace" className="h-6 w-auto object-contain" />
         </Link>
-        <div className="flex items-center">
-          <AccentureLogo variant="badge" badgeClassName="bg-black px-2.5 py-1 text-xs rounded-md shadow-xs border border-neutral-800" />
-        </div>
       </div>
 
       {/* Nav groups */}
@@ -106,8 +100,6 @@ function AdminLayoutContent() {
       <div className="md:hidden sticky top-0 z-40 flex h-14 items-center justify-between border-b border-[#EAE4D9]/80 bg-[#FAF7F2]/95 backdrop-blur-md px-4">
         <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
           <img src="/mindspace-wordmark.png" alt="MindSpace" className="h-5 w-auto object-contain" />
-          <span className="text-[#9AA79C] font-light text-xs">×</span>
-          <AccentureLogo variant="badge" badgeClassName="bg-black px-2 py-0.5 text-xs rounded-md shadow-xs border border-neutral-800" />
         </Link>
         <button
           type="button"

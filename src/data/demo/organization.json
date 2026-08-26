@@ -1,14 +1,14 @@
 {
-  "orgId": "accenture",
-  "name": "Accenture",
-  "legalName": "Accenture Solutions Pvt Ltd",
-  "primaryDomain": "accenture.com",
+  "orgId": "demo-acme",
+  "name": "Acme Corp",
+  "legalName": "Acme Corporation",
+  "primaryDomain": "acme.com",
   "branding": {
     "primary": "#2D6A4F",
-    "accent": "#A100FF",
+    "accent": "#A9CBAE",
     "surface": "#FAF7F0",
-    "appName": "MindSpace × Accenture",
-    "supportEmail": "wellbeing@accenture.com"
+    "appName": "MindSpace",
+    "supportEmail": "wellbeing@acme.com"
   },
   "plan": {
     "tier": "enterprise",
@@ -19,7 +19,7 @@
   "policy": {
     "identityMode": "aggregate_only",
     "kAnonymity": 5,
-    "escalationContact": "wellbeing-safety@accenture.com",
+    "escalationContact": "wellbeing-safety@acme.com",
     "retentionDays": 730,
     "allowedCohortDims": [
       "department",

@@ -26,8 +26,6 @@ import {
   Star,
   Video,
 } from 'lucide-react';
-import { useTenant } from '@/app/TenantContext';
-import { AccentureLogo } from '@/components/AccentureLogo';
 
 const NAV_LINKS = [
   { href: '#platform', label: 'Platform' },
@@ -366,7 +364,6 @@ const HERO_PANELS: Record<HeroTabId, () => JSX.Element> = {
 };
 
 export function LandingPage() {
-  const { organization } = useTenant();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeHeroTab, setActiveHeroTab] = useState<HeroTabId>('overview');
   const ActiveHeroPanel = HERO_PANELS[activeHeroTab];
@@ -378,8 +375,6 @@ export function LandingPage() {
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
             <img src="/mindspace-wordmark.png" alt="MindSpace" className="h-6 sm:h-7 w-auto object-contain" />
-            <span className="text-[#9AA79C] font-light text-sm">×</span>
-            <AccentureLogo variant="badge" badgeClassName="bg-black px-2.5 py-1 text-xs rounded-md shadow-xs border border-neutral-800" />
           </Link>
 
           <nav className="hidden md:flex items-center gap-8 text-xs font-semibold text-[#56685A]">
@@ -569,7 +564,7 @@ export function LandingPage() {
       <section className="border-y border-[#EAE4D9] bg-white py-6 sm:py-7 mt-14 sm:mt-20">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs sm:text-sm font-semibold text-[#3E4F42] text-center sm:text-left">
-            Purpose-built for Accenture’s people team
+            Purpose-built for modern people teams
           </p>
           <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
             {[
@@ -868,8 +863,6 @@ export function LandingPage() {
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div className="flex items-center gap-3">
             <img src="/mindspace-wordmark.png" alt="MindSpace" className="h-5 w-auto object-contain" />
-            <span className="text-[#9AA79C] font-light text-sm">×</span>
-            <AccentureLogo variant="badge" badgeClassName="bg-black px-2 py-0.5 text-xs rounded-md shadow-xs border border-neutral-800" />
           </div>
 
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-[#78897B]">
@@ -879,7 +872,7 @@ export function LandingPage() {
           </div>
         </div>
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 mt-6 pt-6 border-t border-[#EAE4D9]">
-          <p className="text-xs text-[#78897B]">© 2026 MindSpace. Built for {organization?.name ?? 'Accenture'}.</p>
+          <p className="text-xs text-[#78897B]">© 2026 MindSpace. All rights reserved.</p>
         </div>
       </footer>
     </div>

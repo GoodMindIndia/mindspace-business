@@ -257,10 +257,10 @@ export function SelfHelpPage() {
           </a>
           <span className="text-[#D9D2C5]">|</span>
           <a
-            href="mailto:wellbeing@accenture.com"
+            href="mailto:wellbeing@mindspace.example"
             className="font-semibold text-[#2D6A4F] hover:underline"
           >
-            Accenture EAP Desk
+            EAP Desk
           </a>
         </div>
       </section>

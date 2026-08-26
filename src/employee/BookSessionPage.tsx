@@ -94,7 +94,7 @@ export function BookSessionPage() {
               </>
             )}
           </p>
-          <p className="text-[11px] text-[#78897B] mt-0.5">Accenture Wellbeing Benefits</p>
+          <p className="text-[11px] text-[#78897B] mt-0.5">{organization.name} Wellbeing Benefits</p>
         </div>
       </section>
 

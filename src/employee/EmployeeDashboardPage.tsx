@@ -308,7 +308,7 @@ export function EmployeeDashboardPage() {
         <div className="flex items-center gap-2 shrink-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-[#EAE4D9] text-xs">
           <span className="text-[#78897B]">Need urgent support?</span>
           <a
-            href="mailto:wellbeing@accenture.com"
+            href={`mailto:${organization.branding.supportEmail}`}
             className="font-medium text-[#2D6A4F] hover:underline flex items-center gap-1"
           >
             <PhoneCall className="h-3.5 w-3.5" />

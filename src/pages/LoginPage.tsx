@@ -3,7 +3,6 @@ import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowRight, Eye, EyeOff, Loader2, Lock, ShieldCheck, Sparkles } from 'lucide-react';
 import { useAuth, DEMO_LOGIN_HINT } from '@/app/AuthContext';
 import { useTenant } from '@/app/TenantContext';
-import { AccentureLogo } from '@/components/AccentureLogo';
 
 export function LoginPage() {
   const { user, signIn, isDemoAuth } = useAuth();
@@ -46,7 +45,7 @@ export function LoginPage() {
       <div
         aria-hidden
         className="pointer-events-none absolute -right-20 -top-20 h-[500px] w-[500px] opacity-25 blur-3xl rounded-full"
-        style={{ background: 'radial-gradient(circle, #A100FF 0%, #8EA994 50%, transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, #8EA994 0%, #C2D4C5 50%, transparent 70%)' }}
       />
       <div
         aria-hidden
@@ -58,13 +57,11 @@ export function LoginPage() {
       <header className="relative w-full max-w-7xl mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
           <img src="/mindspace-wordmark.png" alt="MindSpace" className="h-8 w-auto object-contain" />
-          <span className="text-[#9AA79C] font-light text-sm">×</span>
-          <AccentureLogo variant="badge" badgeClassName="bg-black px-2.5 py-1 text-xs rounded-md shadow-xs border border-neutral-800" />
         </Link>
 
         <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-[#E8F0EA] px-3.5 py-1 text-xs font-semibold text-[#2D6A4F]">
           <Sparkles className="h-3.5 w-3.5" />
-          Accenture People Console
+          People Console
         </span>
       </header>
 
@@ -107,7 +104,7 @@ export function LoginPage() {
           <div className="w-full max-w-[440px]">
             <div className="rounded-[32px] bg-white p-8 sm:p-10 border border-[#EAE4D9] shadow-[0_30px_60px_-15px_rgba(35,50,38,0.14)] text-slate-900">
               <div className="flex items-center justify-between mb-4">
-                <AccentureLogo variant="badge" badgeClassName="bg-black px-3 py-1.5 rounded-lg border-neutral-800" />
+                <img src="/mindspace-wordmark.png" alt="MindSpace" className="h-6 w-auto object-contain" />
                 <span className="text-[11px] font-medium text-neutral-500">People Leadership</span>
               </div>
               <h2 className="font-serif text-2xl sm:text-3xl font-normal tracking-tight text-slate-900">

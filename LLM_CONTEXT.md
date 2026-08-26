@@ -1,7 +1,7 @@
 # MindSpace for Business — AI / LLM Context & Architecture Guide
 
 > **Quick Summary for AI Agents & LLMs:**
-> MindSpace for Business is a white-labeled workplace mental wellbeing platform (currently white-labeled for Accenture). It has an **employee-facing app** (`/app/*`, real Supabase accounts — assessments, an AI companion "Tara", therapy booking) and an **HR admin console** (`/admin/*`, aggregate-only analytics with k-anonymity). The two are cleanly separated: employees never see aggregate data, HR never sees an individual's answers.
+> MindSpace for Business is a white-labeled workplace mental wellbeing platform. It has an **employee-facing app** (`/app/*`, real Supabase accounts — assessments, an AI companion "Tara", therapy booking) and an **HR admin console** (`/admin/*`, aggregate-only analytics with k-anonymity). The two are cleanly separated: employees never see aggregate data, HR never sees an individual's answers.
 >
 > **Read this before trusting anything below at face value — and read §0 first.** This codebase is mid-migration: an older Firestore/Gemini/anonymous-check-in architecture and a newer Supabase/real-account architecture are both live at once, wired into different admin routes. Verify against the actual file before making claims about it; don't assume this doc is current by the time you read it either — check the top-level `git log` date against your session date.
 

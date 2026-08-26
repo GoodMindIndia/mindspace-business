@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" fill="none">
-  <!-- Purple Chevron accent above the 't' -->
-  <path d="M123 12 L141 23 L123 34 L117 29 L130 23 L117 17 Z" fill="#A100FF" />
-  <!-- 'accenture' wordmark in bold geometric sans -->
-  <text x="10" y="62" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="46" font-weight="900" letter-spacing="-1.5px" fill="currentColor">accenture</text>
-</svg>

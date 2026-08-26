@@ -28,7 +28,7 @@ export const CREDIT_PLANS: CreditPlan[] = [
       '5,000 Tara AI Voice & Chat sessions',
       'Unlimited workload, mood & burnout check-ins',
       'Aggregated k-anonymity HR sentiment reports',
-      'Accenture EAP & 24/7 Crisis helpline routing',
+      'EAP & 24/7 Crisis helpline routing',
       'Standard business support',
     ],
   },

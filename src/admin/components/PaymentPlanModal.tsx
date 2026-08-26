@@ -359,7 +359,6 @@ export function PaymentPlanModal({
                       <label className="text-[11px] font-semibold text-[#56685A]">Corporate UPI ID / VPA</label>
                       <input
                         type="text"
-                        defaultValue="accenture.wellbeing@okaxis"
                         placeholder="e.g. orgname@okhdfcbank"
                         className="rounded-xl border border-[#D9D2C5] bg-white px-3 py-2 text-xs text-[#243327] focus:border-[#2D6A4F] focus:outline-none"
                       />

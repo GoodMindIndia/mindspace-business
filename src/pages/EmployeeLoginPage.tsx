@@ -2,12 +2,9 @@ import { useState } from 'react';
 import { Link, Navigate, useLocation } from 'react-router-dom';
 import { Loader2, ShieldCheck, Sparkles, Lock } from 'lucide-react';
 import { useEmployeeAuth } from '@/app/EmployeeAuthContext';
-import { useTenant } from '@/app/TenantContext';
-import { AccentureLogo } from '@/components/AccentureLogo';
 
 export function EmployeeLoginPage() {
   const { user, signInWithGoogle, ready, isConfigured } = useEmployeeAuth();
-  const { organization } = useTenant();
   const location = useLocation();
 
   const [busy, setBusy] = useState(false);
@@ -34,7 +31,7 @@ export function EmployeeLoginPage() {
       <div
         aria-hidden
         className="pointer-events-none absolute -right-20 -top-20 h-[500px] w-[500px] opacity-25 blur-3xl rounded-full"
-        style={{ background: 'radial-gradient(circle, #A100FF 0%, #8EA994 50%, transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, #8EA994 0%, #C2D4C5 50%, transparent 70%)' }}
       />
       <div
         aria-hidden
@@ -45,13 +42,11 @@ export function EmployeeLoginPage() {
       <header className="relative w-full max-w-7xl mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
           <img src="/mindspace-wordmark.png" alt="MindSpace" className="h-8 w-auto object-contain" />
-          <span className="text-[#9AA79C] font-light text-sm">×</span>
-          <AccentureLogo variant="badge" badgeClassName="bg-black px-2.5 py-1 text-xs rounded-md shadow-xs border border-neutral-800" />
         </Link>
 
         <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-[#E8F0EA] px-3.5 py-1 text-xs font-semibold text-[#2D6A4F]">
           <Sparkles className="h-3.5 w-3.5" />
-          Accenture Employee Portal
+          Employee Portal
         </span>
       </header>
 
@@ -59,16 +54,16 @@ export function EmployeeLoginPage() {
         {/* Left Column: Hero Narrative */}
         <div className="flex flex-col gap-6 lg:col-span-7 max-w-2xl">
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#78897B]">ACCENTURE WELLBEING HUB</span>
-            <span className="rounded-full bg-purple-100 text-[#A100FF] px-2 py-0.5 text-[10px] font-bold">100% PRIVATE</span>
+            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#78897B]">WELLBEING HUB</span>
+            <span className="rounded-full bg-[#E8F0EA] text-[#2D6A4F] px-2 py-0.5 text-[10px] font-bold">100% PRIVATE</span>
           </div>
 
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-[3.65rem] font-normal leading-[1.12] tracking-tight text-[#233226]">
-            A space that's just yours at <span className="text-[#2D6A4F] italic">Accenture</span>.
+            A space that's <span className="text-[#2D6A4F] italic">just yours</span>.
           </h1>
 
           <p className="text-sm sm:text-base leading-relaxed text-[#56685A] max-w-xl">
-            Talk to Tara anytime, take unlimited assessments, and book licensed therapists, fully covered by Accenture.
+            Talk to Tara anytime, take unlimited assessments, and book licensed therapists, fully covered by your employer.
           </p>
 
           <div className="border-l-2 border-[#2D6A4F]/40 pl-4 py-1 max-w-lg">
@@ -91,7 +86,7 @@ export function EmployeeLoginPage() {
           <div className="w-full max-w-[440px]">
             <div className="rounded-[32px] bg-white p-8 sm:p-10 border border-[#EAE4D9] shadow-[0_30px_60px_-15px_rgba(35,50,38,0.14)] text-slate-900">
               <div className="flex items-center justify-between mb-4">
-                <AccentureLogo variant="badge" badgeClassName="bg-black px-3 py-1.5 rounded-lg border-neutral-800" />
+                <img src="/mindspace-wordmark.png" alt="MindSpace" className="h-6 w-auto object-contain" />
                 <span className="text-[11px] font-medium text-neutral-500">SSO Portal</span>
               </div>
 
@@ -129,10 +124,10 @@ export function EmployeeLoginPage() {
       </main>
 
       <footer className="relative w-full max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 pt-6 text-xs text-[#78897B]">
-        <p>© 2026 MindSpace × Accenture Solutions. All rights reserved.</p>
+        <p>© 2026 MindSpace. All rights reserved.</p>
         <Link to="/login" className="hover:text-[#233226] transition-colors flex items-center gap-1">
           <Lock className="h-3 w-3" />
-          <span>Accenture People & HR Team Portal</span>
+          <span>People & HR Team Portal</span>
         </Link>
       </footer>
     </div>

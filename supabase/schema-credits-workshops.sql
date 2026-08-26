@@ -151,7 +151,3 @@ grant execute on function public.org_workshop_request_summary(text, int) to anon
 insert into public.org_credit_accounts (org_id, plan_name, total_credits, credits_used)
 values ('demo-acme', 'Growth', 1000, 0)
 on conflict (org_id) do nothing;
-
-insert into public.org_credit_accounts (org_id, plan_name, total_credits, credits_used)
-values ('accenture', 'Enterprise', 5000, 0)
-on conflict (org_id) do nothing;
