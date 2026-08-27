@@ -63,7 +63,7 @@ export async function saveMyAssessment(
     score: result.score,
     max_score: result.maxScore,
     level: result.level,
-    items: JSON.stringify(result.items),
+    items: result.items,
   });
 
   if (error) throw error;

@@ -255,7 +255,7 @@ export function ReportPage() {
             : undefined
         }
       >
-        <NotLiveNote live={moodToday.live} />
+        <NotLiveNote live={moodToday.live} schema="schema-daily-mood.sql" />
         {moodToday.live && moodToday.total === 0 && (
           <p className="text-[11px] text-[#9AA79C] italic py-2">Nobody has checked in yet today.</p>
         )}
@@ -370,14 +370,13 @@ export function ReportPage() {
 
 /** Distinguishes "genuinely zero" from "this RPC hasn't been deployed yet" —
  * without it the two look identical and read as a broken dashboard. */
-function NotLiveNote({ live }: { live: boolean }) {
+function NotLiveNote({ live, schema = 'schema-employee-analytics.sql' }: { live: boolean; schema?: string }) {
   if (live) return null;
   return (
     <p className="flex items-center gap-1.5 text-[11px] text-[#9E6B38]">
       <ShieldCheck className="h-3 w-3 shrink-0" aria-hidden />
       <span>
-        Not set up yet. Run{' '}
-        <code className="rounded bg-[#F3EEE5] px-1 py-0.5">supabase/schema-employee-analytics.sql</code> in your
+        Not set up yet. Run <code className="rounded bg-[#F3EEE5] px-1 py-0.5">supabase/{schema}</code> in your
         Supabase project to turn this on.
       </span>
     </p>
