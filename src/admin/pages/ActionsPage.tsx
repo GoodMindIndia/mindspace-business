@@ -8,7 +8,6 @@ import { StackedShareBar, type ShareSegment } from '@/admin/charts/StackedShareB
 import { RankedBarChart } from '@/admin/charts/RankedBarChart';
 import { pctLabel, ORDINAL_RAMP } from '@/admin/charts/chart-theme';
 import { EFFORT_LABEL } from '@/lib/tier';
-import { DEFAULT_K_ANONYMITY } from '@/domain/cohorts';
 import { getOrgWorkshopRequestSummary, type WorkshopRequestSummary } from '@/services/workshop-service';
 
 type Effort = 'low' | 'medium' | 'high';
@@ -22,21 +21,28 @@ const EFFORT_COLOR: Record<Effort, string> = {
   high: ORDINAL_RAMP[2],
 };
 
+// Workshop requests are a suggestion box, not clinical data — HR never sees
+// who asked (the table is owner-only RLS; this RPC only ever returns a topic
+// and a count), so unlike assessment/mood aggregates there's no identity risk
+// in naming a topic that only one person has requested. Masking it as "Other"
+// below the org's k-anonymity threshold just made the feature look broken for
+// any team smaller than that threshold.
+const WORKSHOP_TOPIC_MIN_COUNT = 1;
+
 export function ActionsPage() {
   const { report, loading, notEnoughData } = useReport();
   const { organization } = useTenant();
-  const k = organization.policy.kAnonymity || DEFAULT_K_ANONYMITY;
   const [workshopRequests, setWorkshopRequests] = useState<WorkshopRequestSummary | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    getOrgWorkshopRequestSummary(organization.orgId, k).then((summary) => {
+    getOrgWorkshopRequestSummary(organization.orgId, WORKSHOP_TOPIC_MIN_COUNT).then((summary) => {
       if (!cancelled) setWorkshopRequests(summary);
     });
     return () => {
       cancelled = true;
     };
-  }, [organization.orgId, k]);
+  }, [organization.orgId]);
 
   if (loading) return <ReportSkeleton />;
 

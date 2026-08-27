@@ -18,7 +18,7 @@
   },
   "policy": {
     "identityMode": "aggregate_only",
-    "kAnonymity": 5,
+    "kAnonymity": 1,
     "escalationContact": "wellbeing-safety@acme.com",
     "retentionDays": 730,
     "allowedCohortDims": [
