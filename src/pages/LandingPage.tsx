@@ -25,12 +25,14 @@ import {
   Users2,
   Star,
   Video,
+  ChevronDown,
 } from 'lucide-react';
 
 const NAV_LINKS = [
   { href: '#platform', label: 'Platform' },
   { href: '#therapy', label: 'Therapy' },
   { href: '#pricing', label: 'Pricing' },
+  { href: '#faq', label: 'FAQ' },
 ];
 
 const SPECS = [
@@ -91,6 +93,54 @@ const STEPS = [
     n: '04',
     title: 'HR gets an executive report',
     body: 'A plain-English monthly briefing: what’s driving strain, where, and what to do about it.',
+  },
+];
+
+const TESTIMONIALS = [
+  {
+    quote:
+      'We finally get a monthly report we can act on instead of a spreadsheet of scores nobody reads. The first briefing told us exactly which team needed support, before anyone had to say it out loud.',
+    name: 'Head of People',
+    context: '420-employee SaaS company',
+  },
+  {
+    quote:
+      'The k-anonymity threshold was the thing that got this past legal and got employees to actually trust it. Participation nearly doubled once people realized individual answers really can’t be traced back to them.',
+    name: 'VP, HR Operations',
+    context: 'Manufacturing & logistics, 900+ employees',
+  },
+  {
+    quote:
+      'Pay-as-you-use therapy at ₹500 a session removed every excuse. We went from a handful of EAP calls a quarter to over a hundred sessions booked in the first two months.',
+    name: 'People Ops Lead',
+    context: 'Fintech startup, Series B',
+  },
+];
+
+const FAQS = [
+  {
+    q: 'How does the k-anonymity threshold actually work?',
+    a: 'Every aggregate figure HR sees is computed inside the database by a security-definer function, not filtered in the UI. If fewer than 5 employees (configurable) have answered in a given group, that slice is withheld at the source, it never reaches the dashboard, the API, or a report.',
+  },
+  {
+    q: 'Can HR ever see an individual employee’s answers?',
+    a: 'No. Employee accounts are row-level-secured in Postgres so that only the employee who owns a record can read it, even the admin service layer can’t query another user’s row directly. HR only has access to the aggregate RPCs described above.',
+  },
+  {
+    q: 'Who are the therapists, and is session content shared with HR?',
+    a: 'All sessions are with licensed clinical psychologists booked directly by the employee. Session notes and recordings stay strictly between the employee and their therapist, HR only sees anonymized, aggregate utilization stats, like sessions booked and repeat-booking rate.',
+  },
+  {
+    q: 'How is pricing structured?',
+    a: 'The platform is a flat annual license (₹1,20,000/year for up to 500 active employees) that includes unlimited assessments, the Tara AI companion, and the HR console. Therapy is billed separately, pay-as-you-use at ₹500 per 45-minute session, with no retainer or minimum commitment.',
+  },
+  {
+    q: 'How long does onboarding take?',
+    a: 'Most teams are live within a week. We provision your org, apply your branding to the employee app, and set your k-anonymity threshold, then employees sign in with Google via Supabase and start checking in immediately.',
+  },
+  {
+    q: 'Where is our data stored, and is it encrypted?',
+    a: 'All data lives in a dedicated Supabase Postgres instance, encrypted in transit and at rest. Nothing is shared across tenants, and there is no HRIS, attendance, or productivity data collected, only what employees choose to submit through assessments and bookings.',
   },
 ];
 
@@ -366,6 +416,7 @@ const HERO_PANELS: Record<HeroTabId, () => JSX.Element> = {
 export function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeHeroTab, setActiveHeroTab] = useState<HeroTabId>('overview');
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
   const ActiveHeroPanel = HERO_PANELS[activeHeroTab];
 
   return (
@@ -467,7 +518,7 @@ export function LandingPage() {
             WORKPLACE MENTAL HEALTH INTELLIGENCE
           </div>
 
-          <h1 className="mt-6 font-sans text-4xl sm:text-6xl lg:text-[4.2rem] font-semibold tracking-tight text-[#233226] leading-[1.05]">
+          <h1 className="mt-6 font-serif text-4xl sm:text-6xl lg:text-[4.2rem] font-normal tracking-tight text-[#233226] leading-[1.05]">
             Know how your people
             <br className="hidden sm:block" /> actually feel.
           </h1>
@@ -589,7 +640,7 @@ export function LandingPage() {
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-xl mb-10 sm:mb-12">
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#78897B]">The platform</p>
-            <h2 className="font-sans text-2xl sm:text-4xl font-semibold tracking-tight text-[#233226] mt-2">
+            <h2 className="font-serif text-2xl sm:text-4xl font-normal tracking-tight text-[#233226] mt-2">
               Everything wellbeing needs, in one console
             </h2>
           </div>
@@ -601,7 +652,7 @@ export function LandingPage() {
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#2D6A4F] text-white mb-5">
                   <Bot className="h-5 w-5" />
                 </div>
-                <h3 className="font-sans text-xl sm:text-2xl font-semibold text-[#233226]">Always-on employee support</h3>
+                <h3 className="font-serif text-xl sm:text-2xl font-normal text-[#233226]">Always-on employee support</h3>
                 <p className="mt-2.5 text-xs sm:text-sm leading-relaxed text-[#56685A] max-w-sm">
                   Unlimited 5-minute assessments for workload, anxiety, and burnout, plus Tara, an AI companion
                   employees can talk to anytime. Individual answers are never shared with HR.
@@ -633,7 +684,7 @@ export function LandingPage() {
                   >
                     <tile.icon className="h-[18px] w-[18px]" />
                   </div>
-                  <h3 className="font-sans text-base font-semibold text-[#233226]">{tile.title}</h3>
+                  <h3 className="font-serif text-base font-normal text-[#233226]">{tile.title}</h3>
                   <p className="mt-1.5 text-xs leading-relaxed text-[#56685A]">{tile.body}</p>
                 </div>
               </div>
@@ -647,7 +698,7 @@ export function LandingPage() {
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-xl mb-10 sm:mb-14">
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#78897B]">How it works</p>
-            <h2 className="font-sans text-2xl sm:text-4xl font-semibold tracking-tight text-[#233226] mt-2">
+            <h2 className="font-serif text-2xl sm:text-4xl font-normal tracking-tight text-[#233226] mt-2">
               From a 5-minute check-in to an executive briefing
             </h2>
           </div>
@@ -666,7 +717,7 @@ export function LandingPage() {
                     <ChevronRight className="hidden lg:block h-3.5 w-3.5 text-[#D9D2C5] -ml-2" />
                   )}
                 </div>
-                <h3 className="font-sans text-sm sm:text-base font-semibold text-[#233226]">{step.title}</h3>
+                <h3 className="font-serif text-sm sm:text-base font-normal text-[#233226]">{step.title}</h3>
                 <p className="text-xs leading-relaxed text-[#56685A]">{step.body}</p>
               </div>
             ))}
@@ -684,7 +735,7 @@ export function LandingPage() {
                 CONFIDENTIAL THERAPY NETWORK
               </span>
 
-              <h2 className="font-sans text-2xl sm:text-4xl font-semibold tracking-tight text-[#233226] leading-tight">
+              <h2 className="font-serif text-2xl sm:text-4xl font-normal tracking-tight text-[#233226] leading-tight">
                 Direct access to licensed psychologists at ₹500/session
               </h2>
 
@@ -730,12 +781,51 @@ export function LandingPage() {
         </div>
       </section>
 
+      {/* Testimonials */}
+      <section className="py-16 sm:py-24">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-xl mb-10 sm:mb-14">
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#78897B]">What HR teams say</p>
+            <h2 className="font-serif text-2xl sm:text-4xl font-normal tracking-tight text-[#233226] mt-2">
+              Trusted by people teams who need answers, not dashboards
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+            {TESTIMONIALS.map((t) => (
+              <div
+                key={t.name}
+                className="rounded-2xl border border-[#EAE4D9] bg-white p-6 sm:p-7 flex flex-col justify-between hover:border-[#2D6A4F]/40 transition-colors"
+              >
+                <div>
+                  <Quote className="h-5 w-5 text-[#C3D0C6]" />
+                  <p className="mt-3 text-xs sm:text-sm leading-relaxed text-[#3E4F42]">{t.quote}</p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-[#EAE4D9] flex items-center gap-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#E8F0EA] text-[#2D6A4F]">
+                    <div className="flex">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} className="h-2.5 w-2.5 fill-current" />
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-[#233226]">{t.name}</p>
+                    <p className="text-[11px] text-[#78897B]">{t.context}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Pricing */}
       <section id="pricing" className="py-16 sm:py-24 border-t border-[#EAE4D9] bg-white">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
           <div className="text-center max-w-xl mx-auto mb-10 sm:mb-14">
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#78897B]">Simple pricing</p>
-            <h2 className="font-sans text-2xl sm:text-4xl font-semibold tracking-tight text-[#233226] mt-2">
+            <h2 className="font-serif text-2xl sm:text-4xl font-normal tracking-tight text-[#233226] mt-2">
               Transparent enterprise pricing
             </h2>
           </div>
@@ -748,7 +838,7 @@ export function LandingPage() {
               </span>
 
               <div>
-                <h3 className="font-sans text-xl sm:text-2xl font-semibold text-[#233226]">White-Label Platform</h3>
+                <h3 className="font-serif text-xl sm:text-2xl font-normal text-[#233226]">White-Label Platform</h3>
                 <p className="text-xs text-[#78897B] mt-0.5">Enterprise dashboard for up to 500 active employees.</p>
 
                 <div className="mt-4 flex items-baseline gap-1.5">
@@ -786,7 +876,7 @@ export function LandingPage() {
             {/* Therapy Plan */}
             <div className="rounded-2xl bg-white p-7 sm:p-8 border border-[#EAE4D9] shadow-xs flex flex-col justify-between">
               <div>
-                <h3 className="font-sans text-xl sm:text-2xl font-semibold text-[#233226]">1:1 Private Therapy</h3>
+                <h3 className="font-serif text-xl sm:text-2xl font-normal text-[#233226]">1:1 Private Therapy</h3>
                 <p className="text-xs text-[#78897B] mt-0.5">On-demand licensed clinical psychologist support.</p>
 
                 <div className="mt-4 flex items-baseline gap-1.5">
@@ -824,6 +914,51 @@ export function LandingPage() {
         </div>
       </section>
 
+      {/* FAQ */}
+      <section id="faq" className="py-16 sm:py-24 border-t border-[#EAE4D9] bg-white">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6">
+          <div className="text-center max-w-xl mx-auto mb-10 sm:mb-14">
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#78897B]">Questions</p>
+            <h2 className="font-serif text-2xl sm:text-4xl font-normal tracking-tight text-[#233226] mt-2">
+              Frequently asked questions
+            </h2>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            {FAQS.map((item, i) => {
+              const isOpen = openFaq === i;
+              return (
+                <div
+                  key={item.q}
+                  className={`rounded-2xl border bg-[#FAF7F2] transition-colors ${
+                    isOpen ? 'border-[#2D6A4F]/40' : 'border-[#EAE4D9]'
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaq(isOpen ? null : i)}
+                    aria-expanded={isOpen}
+                    className="w-full flex items-center justify-between gap-4 px-5 sm:px-6 py-4 sm:py-5 text-left cursor-pointer"
+                  >
+                    <span className="text-xs sm:text-sm font-semibold text-[#233226]">{item.q}</span>
+                    <ChevronDown
+                      className={`h-4 w-4 shrink-0 text-[#78897B] transition-transform duration-200 ${
+                        isOpen ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+                  {isOpen && (
+                    <div className="px-5 sm:px-6 pb-4 sm:pb-5 -mt-1 animate-in fade-in slide-in-from-top-1 duration-200">
+                      <p className="text-xs sm:text-sm leading-relaxed text-[#56685A]">{item.a}</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* Closing CTA band */}
       <section className="relative py-16 sm:py-24">
         <div className="relative mx-auto max-w-3xl px-4 sm:px-6">
@@ -833,7 +968,7 @@ export function LandingPage() {
               className="pointer-events-none absolute left-1/2 top-0 h-[300px] w-[600px] -translate-x-1/2 opacity-[0.1] blur-3xl"
               style={{ background: 'radial-gradient(ellipse, #A100FF 0%, #2D6A4F 55%, transparent 75%)' }}
             />
-            <h2 className="relative font-sans text-2xl sm:text-4xl font-semibold tracking-tight text-[#233226]">
+            <h2 className="relative font-serif text-2xl sm:text-4xl font-normal tracking-tight text-[#233226]">
               Ready to see what your people are really telling you?
             </h2>
             <p className="relative mt-3 text-sm text-[#56685A] max-w-lg mx-auto">
