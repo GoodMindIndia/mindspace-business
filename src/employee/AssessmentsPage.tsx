@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Flower2, Smile, Layers, Scale, Users, TrendingUp, type LucideIcon } from 'lucide-react';
+import { Flower2, Smile, Layers, Scale, Users, TrendingUp, ClipboardList, Check, type LucideIcon } from 'lucide-react';
 import { ASSESSMENT_METADATA, ASSESSMENT_TYPES, type AssessmentType } from '@/domain/assessments';
 import { useEmployeeAuth } from '@/app/EmployeeAuthContext';
 import { listMyAssessments, type EmployeeAssessmentRecord } from '@/services/employee-assessment-service';
+import { PageHero, ProgressRing } from '@/components/PageHero';
 
 const TYPE_ICON: Record<AssessmentType, LucideIcon> = {
   workload: Layers,
@@ -48,82 +49,78 @@ export function AssessmentsPage() {
 
   const completedCount = latestByType.size;
   const totalCount = ASSESSMENT_TYPES.length;
-  const overallProgress = Math.round((completedCount / totalCount) * 100);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-8 md:gap-12 items-start">
-      <div className="flex flex-col gap-6 md:sticky md:top-8">
-        <div>
-          <h1 className="font-serif text-3xl font-normal tracking-tight text-[#233226]">Check in with yourself</h1>
-          <p className="mt-3 text-sm leading-relaxed text-[#56685A]">
-            Six short, private check-ins, about five minutes each. Answer for how things have felt over the last two
-            weeks, not just today.
-          </p>
-        </div>
+    <div className="flex flex-col gap-8 pb-12">
+      <PageHero
+        eyebrow="Private check-ins"
+        icon={ClipboardList}
+        tone="green"
+        badge="Results stay yours"
+        title="Check in with yourself"
+        sub="Six short check-ins, about five minutes each. Answer for how things have felt over the last two weeks, not just today. There are no right answers, and none of this is a diagnosis."
+        aside={<ProgressRing value={completedCount} total={totalCount} label="Completed" />}
+      />
 
-        <div className="flex flex-col gap-2 border-t border-[#EAE4D9] pt-5">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-semibold uppercase tracking-[0.1em] text-[#78897B]">Completed</span>
-            <span className="font-semibold text-[#233226] tabular-nums">
-              {completedCount} of {totalCount}
-            </span>
-          </div>
-          <div className="h-1.5 w-full rounded-full bg-[#EAE4D9] overflow-hidden">
-            <div
-              className="h-full rounded-full bg-[#2D6A4F] transition-all duration-300"
-              style={{ width: `${overallProgress}%` }}
-            />
-          </div>
-        </div>
-
-        <p className="text-xs leading-relaxed text-[#78897B] border-t border-[#EAE4D9] pt-5">
-          There are no right answers, and none of this is a diagnosis. Your results stay private to you.
-        </p>
-      </div>
-
-      <div className="flex flex-col gap-4 md:max-h-[calc(100vh-14rem)] md:overflow-y-auto md:pr-2 md:pb-2">
-        {ASSESSMENT_TYPES.map((type) => {
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
+        {ASSESSMENT_TYPES.map((type, i) => {
           const meta = ASSESSMENT_METADATA[type];
           const latest = latestByType.get(type);
           const completed = !loading && !!latest;
-          const progress = completed ? 100 : 0;
           const Icon = TYPE_ICON[type];
 
           return (
-            <div key={type} className="rounded-[24px] bg-white p-6 shadow-[0_1px_3px_rgba(35,50,38,0.08),0_8px_24px_-12px_rgba(35,50,38,0.12)] flex flex-col gap-5">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#F3EEE5] text-[#2D6A4F]">
+            <div
+              key={type}
+              className="ms-fade-up group relative overflow-hidden rounded-[24px] bg-white p-6 border border-[#EAE4D9] shadow-[0_1px_3px_rgba(35,50,38,0.06)] flex flex-col gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_44px_-22px_rgba(35,50,38,0.3)] hover:border-[#2C6E6A]/35"
+              style={{ animationDelay: `${i * 70}ms` }}
+            >
+              {/* Completed cards carry a green edge, so done vs not-done reads
+                  from across the room rather than from a 0% progress bar. */}
+              <span
+                aria-hidden
+                className="absolute left-0 top-0 h-full w-1 transition-colors"
+                style={{ background: completed ? '#2F7F4C' : '#EAE4D9' }}
+              />
+
+              <div className="flex items-start justify-between gap-4 pl-2">
+                <div className="flex items-start gap-3.5">
+                  <div
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl transition-colors"
+                    style={
+                      completed
+                        ? { background: '#E8F0EA', color: '#2F7F4C' }
+                        : { background: '#E9F1F0', color: '#2C6E6A' }
+                    }
+                  >
                     <Icon className="h-5 w-5" />
                   </div>
-                  <div>
-                    <h2 className="text-base font-semibold text-[#233226]">{meta.title}</h2>
-                    <p className="mt-0.5 text-xs text-[#78897B]">{meta.questions.length} questions · 5-7 min</p>
+                  <div className="min-w-0">
+                    <h2 className="text-base font-semibold text-[#233226] leading-tight">{meta.title}</h2>
+                    <p className="mt-1 text-xs text-[#78897B]">{meta.questions.length} questions · 5–7 min</p>
                   </div>
                 </div>
 
-                <Link
-                  to={`/app/assessments/${type}`}
-                  className="shrink-0 inline-flex items-center justify-center rounded-full px-5 py-2 text-xs font-semibold shadow-xs transition-all hover:scale-[1.02] cursor-pointer bg-[#2D6A4F] hover:bg-[#234F3B] text-white"
-                >
-                  {completed ? 'Completed' : 'Start'}
-                </Link>
+                {completed && (
+                  <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-[#E8F0EA] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#2F7F4C]">
+                    <Check className="h-3 w-3" />
+                    Done
+                  </span>
+                )}
               </div>
 
-              <p className="text-sm text-[#56685A] leading-relaxed">{meta.description}</p>
+              <p className="pl-2 text-sm text-[#56685A] leading-relaxed flex-1">{meta.description}</p>
 
-              <div className="flex flex-col gap-1.5">
-                <div className="flex items-center justify-between text-xs text-[#78897B]">
-                  <span>Progress</span>
-                  <span className="font-semibold text-[#233226] tabular-nums">{progress}%</span>
-                </div>
-                <div className="h-1.5 w-full rounded-full bg-[#EAE4D9] overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-[#2D6A4F] transition-all duration-300"
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-              </div>
+              <Link
+                to={`/app/assessments/${type}`}
+                className={`ml-2 inline-flex items-center justify-center rounded-xl py-2.5 text-xs font-semibold transition-colors ${
+                  completed
+                    ? 'border border-[#D9D2C5] bg-[#FAF7F2] text-[#3E4F42] hover:bg-[#F3EFE8]'
+                    : 'bg-[#2C6E6A] text-white hover:bg-[#1E4E4B] shadow-xs'
+                }`}
+              >
+                {completed ? 'Retake this check-in' : 'Start check-in'}
+              </Link>
             </div>
           );
         })}

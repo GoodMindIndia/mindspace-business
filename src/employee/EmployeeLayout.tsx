@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react';
-import { NavLink, Link, Outlet } from 'react-router-dom';
+import { NavLink, Link, Outlet, useLocation } from 'react-router-dom';
 import {
   CalendarHeart,
   ClipboardList,
@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useEmployeeAuth } from '@/app/EmployeeAuthContext';
 import { cn } from '@/lib/utils';
+import { AppBackdrop } from '@/components/AppBackdrop';
 
 interface NavEntry {
   to: string;
@@ -29,9 +30,11 @@ const NAV: NavEntry[] = [
 
 export function EmployeeLayout() {
   const { user } = useEmployeeAuth();
+  const location = useLocation();
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-[#243327] selection:bg-[#E5ECE6] font-sans">
+    <div className="relative min-h-screen bg-[#FAF7F2] text-[#243327] selection:bg-[#E5ECE6] font-sans">
+      <AppBackdrop />
       <header className="sticky top-0 z-30 border-b border-[#EAE4D9]/80 bg-[#FAF7F2]/95 backdrop-blur-md">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
           <Link to="/app/home" className="flex items-center gap-3 hover:opacity-95 transition-opacity">
@@ -60,8 +63,19 @@ export function EmployeeLayout() {
 
       {/* Page content — bottom padding clears the floating/fixed nav */}
       <main className="mx-auto w-full max-w-6xl px-4 sm:px-6 pt-6 pb-28 sm:pb-32">
-        <Outlet />
+        <div key={location.pathname} className="ms-fade-up">
+          <Outlet />
+        </div>
       </main>
+
+      {/* Scrim: fades scrolling content to the page ground *before* it reaches
+          the opaque nav, so a toolbar or card never looks like it's crashing
+          into the dock — it visually recedes first. Sits above content,
+          below the nav; ignores clicks so it never blocks the page under it. */}
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-30 h-24 sm:h-28 bg-gradient-to-t from-[#FAF7F2] via-[#FAF7F2]/70 to-transparent"
+      />
 
       {/* Bottom nav — solid, opaque dark dock on purpose: a translucent/blurred
           bar lets busy page content behind it compete for attention, so this

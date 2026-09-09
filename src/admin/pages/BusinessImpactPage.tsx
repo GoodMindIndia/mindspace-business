@@ -2,6 +2,8 @@ import { Sparkles } from 'lucide-react';
 import { useTenant } from '@/app/TenantContext';
 import { ChartCard } from '@/admin/charts/ChartCard';
 import { StatTile } from '@/admin/charts/StatTile';
+import { PageHero } from '@/components/PageHero';
+import { LineChart } from 'lucide-react';
 import { TrendChart } from '@/admin/charts/TrendChart';
 import { RankedBarChart, type RankedBarDatum } from '@/admin/charts/RankedBarChart';
 import { MAGNITUDE_HUE, TREND_HUE } from '@/admin/charts/chart-theme';
@@ -58,24 +60,14 @@ export function BusinessImpactPage() {
 
   return (
     <div className="flex flex-col gap-8 pb-12">
-      {/* Header */}
-      <header className="flex flex-wrap items-start justify-between gap-3">
-        <div className="flex flex-col gap-1.5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#78897B]">
-            {organization.branding.appName.toUpperCase()} · BUSINESS IMPACT
-          </p>
-          <h1 className="font-serif text-3xl sm:text-4xl font-normal tracking-tight text-[#233226] mt-1">
-            What this is doing for the business
-          </h1>
-          <p className="max-w-2xl text-xs sm:text-sm text-[#56685A] leading-relaxed mt-1">
-            Absenteeism, productivity, and retention, set against where things stood before the programme.
-          </p>
-        </div>
-        <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[#E4D4B8] bg-[#FBF3E1] px-3 py-1 text-[11px] font-medium text-[#9E6B38]">
-          <Sparkles className="h-3 w-3" aria-hidden />
-          <span>Sample data</span>
-        </span>
-      </header>
+      <PageHero
+        eyebrow={`${organization.branding.appName} · Business impact`}
+        icon={LineChart}
+        tone="green"
+        badge="Sample data"
+        title="What this is doing for the business"
+        sub="Absenteeism, productivity, and retention, set against where things stood before the programme."
+      />
 
       <p className="rounded-2xl border border-[#DCD5C8] bg-[#F3EEE5] px-4 py-3 text-[11px] leading-relaxed text-[#78897B]">
         Illustrative. Connect your leave and performance systems to replace these with real numbers.

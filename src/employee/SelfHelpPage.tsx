@@ -11,6 +11,7 @@ import {
   Volume2,
   X,
 } from 'lucide-react';
+import { PageHero } from '@/components/PageHero';
 import { DoodleCanvas } from './components/DoodleCanvas';
 import { GroundingExercise } from './components/GroundingExercise';
 import { BreathingCalmer } from './components/BreathingCalmer';
@@ -77,22 +78,17 @@ export function SelfHelpPage() {
 
   return (
     <div className="flex flex-col gap-6 pb-16 font-sans">
-      {/* SECTION 1: Top Direct Feeling Check-in (At the very top) */}
-      <section className="rounded-2xl bg-white p-5 sm:p-7 border border-[#EAE4D9] flex flex-col gap-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-semibold text-[#233226]">
-              How are you feeling right now?
-            </h1>
-            <p className="text-xs sm:text-sm text-[#78897B] mt-0.5">
-              Type what you're experiencing. We'll suggest matching interactive tools or generate custom self-help activities for you.
-            </p>
-          </div>
-          <span className="text-[11px] font-medium text-[#2D6A4F] bg-[#E8F0EA] px-2.5 py-1 rounded-full self-start sm:self-center">
-            Private & Confidential
-          </span>
-        </div>
+      <PageHero
+        eyebrow="Self-help sanctuary"
+        icon={Feather}
+        tone="green"
+        badge="Private & confidential"
+        title="How are you feeling right now?"
+        sub="Say it in your own words and we'll match you to a grounding, breathing or doodling exercise — or build one for you on the spot."
+      />
 
+      {/* SECTION 1: Top Direct Feeling Check-in */}
+      <section className="rounded-2xl bg-white p-5 sm:p-7 border border-[#EAE4D9] flex flex-col gap-4">
         {/* Quick Situation Pills */}
         <div className="flex flex-wrap gap-2 pt-1">
           {QUICK_FEELINGS.map((item) => (

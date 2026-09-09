@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import { useReport } from '@/admin/ReportContext';
 import { ReportSkeleton, NotEnoughAssessmentData } from '@/admin/widgets/PageHeading';
+import { PageHero } from '@/components/PageHero';
+import { Smile } from 'lucide-react';
 import { PeopleGrid } from '@/admin/widgets/PeopleGrid';
 import { ChartCard } from '@/admin/charts/ChartCard';
 import { StatTile } from '@/admin/charts/StatTile';
@@ -63,19 +65,14 @@ export function FeelingsPage() {
 
   return (
     <div className="flex flex-col gap-8 pb-12">
-      {/* Header */}
-      <header className="flex flex-col gap-1.5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#78897B]">
-          HOW PEOPLE FEEL · {report.meta.orgName.toUpperCase()}
-        </p>
-        <h1 className="font-serif text-3xl sm:text-4xl font-normal tracking-tight text-[#233226] mt-1">
-          Four groups, not one average
-        </h1>
-        <p className="max-w-2xl text-xs sm:text-sm text-[#56685A] leading-relaxed mt-1">
-          An average hides the people at the edges. These are the four groups behind it, and each one needs a
-          different response from you.
-        </p>
-      </header>
+      <PageHero
+        eyebrow={`How people feel · ${report.meta.orgName}`}
+        icon={Smile}
+        tone="green"
+        badge="Aggregate only"
+        title="Four groups, not one average"
+        sub="An average hides the people at the edges. These are the four groups behind it, and each one needs a different response from you."
+      />
 
       {/* ── Key metrics ──────────────────────────────────────────────────── */}
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

@@ -36,7 +36,7 @@ export function StatTile({
   const DeltaIcon = direction === 'flat' ? Minus : direction === 'up' ? ArrowUpRight : ArrowDownRight;
 
   return (
-    <div className="rounded-[22px] bg-white border border-[#EAE4D9] shadow-xs p-5 flex flex-col gap-2">
+    <div className="group rounded-[22px] bg-white border border-[#EAE4D9] shadow-xs p-5 flex flex-col gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#2D6A4F]/30 hover:shadow-[0_16px_36px_-18px_rgba(35,50,38,0.28)]">
       <p className="text-[11px] font-medium text-[#78897B] leading-snug">{label}</p>
 
       <div className="flex items-end justify-between gap-3">

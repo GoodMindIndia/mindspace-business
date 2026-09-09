@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useReport } from '@/admin/ReportContext';
 import { useTenant } from '@/app/TenantContext';
 import { ReportSkeleton, NotEnoughAssessmentData } from '@/admin/widgets/PageHeading';
+import { PageHero } from '@/components/PageHero';
+import { HeartHandshake } from 'lucide-react';
 import { ChartCard } from '@/admin/charts/ChartCard';
 import { StatTile } from '@/admin/charts/StatTile';
 import { StackedShareBar, type ShareSegment } from '@/admin/charts/StackedShareBar';
@@ -68,19 +70,14 @@ export function ActionsPage() {
 
   return (
     <div className="flex flex-col gap-8 pb-12">
-      {/* Header */}
-      <header className="flex flex-col gap-1.5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#78897B]">
-          ACTION ITEMS · {organization.name.toUpperCase()}
-        </p>
-        <h1 className="font-serif text-3xl sm:text-4xl font-normal tracking-tight text-[#233226] mt-1">
-          Two kinds of fix, and you need both
-        </h1>
-        <p className="max-w-2xl text-xs sm:text-sm text-[#56685A] leading-relaxed mt-1">
-          Changing how work happens stops the pressure being created. Running sessions helps the people already
-          carrying it. Doing only the second is how wellbeing programmes get a reputation for being decoration.
-        </p>
-      </header>
+      <PageHero
+        eyebrow={`Action items · ${organization.name}`}
+        icon={HeartHandshake}
+        tone="green"
+        badge="What to do next"
+        title="Two kinds of fix, and you need both"
+        sub="Changing how work happens stops the pressure being created. Running sessions helps the people already carrying it. Doing only the second is how wellbeing programmes get a reputation for being decoration."
+      />
 
       {notEnoughData || !report ? (
         <NotEnoughAssessmentData />

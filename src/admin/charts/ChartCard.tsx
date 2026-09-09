@@ -38,7 +38,7 @@ export function ChartCard({
   const [showTable, setShowTable] = useState(false);
 
   return (
-    <section className="rounded-[28px] bg-white p-6 sm:p-7 border border-[#EAE4D9] shadow-xs flex flex-col gap-5">
+    <section className="rounded-[28px] bg-white p-6 sm:p-7 border border-[#EAE4D9] shadow-xs flex flex-col gap-5 transition-shadow duration-300 hover:shadow-[0_18px_44px_-22px_rgba(35,50,38,0.25)]">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="font-serif text-lg sm:text-xl font-normal text-[#233226]">{title}</h3>

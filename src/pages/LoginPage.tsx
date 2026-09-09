@@ -44,12 +44,12 @@ export function LoginPage() {
       {/* Soft Ambient Botanical Glows — same treatment as the landing page */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-20 -top-20 h-[500px] w-[500px] opacity-25 blur-3xl rounded-full"
+        className="ms-float pointer-events-none absolute -right-20 -top-20 h-[500px] w-[500px] opacity-25 blur-3xl rounded-full"
         style={{ background: 'radial-gradient(circle, #8EA994 0%, #C2D4C5 50%, transparent 70%)' }}
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -left-20 top-[400px] h-[450px] w-[450px] opacity-20 blur-3xl rounded-full"
+        className="ms-float-slow pointer-events-none absolute -left-20 top-[400px] h-[450px] w-[450px] opacity-20 blur-3xl rounded-full"
         style={{ background: 'radial-gradient(circle, #C2D4C5 0%, #E8EFE9 50%, transparent 70%)' }}
       />
 
@@ -68,7 +68,7 @@ export function LoginPage() {
       {/* Main Grid: Well-balanced Layout */}
       <main className="relative w-full max-w-7xl mx-auto my-auto grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-center py-8 sm:py-12">
         {/* Left Column: Hero Narrative */}
-        <div className="flex flex-col gap-6 lg:col-span-7 max-w-2xl">
+        <div className="ms-fade-up flex flex-col gap-6 lg:col-span-7 max-w-2xl">
           <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#78897B]">
             FOR THE PEOPLE TEAM
           </p>
@@ -84,7 +84,7 @@ export function LoginPage() {
           </p>
 
           {/* Quote Callout with Left Border Accent */}
-          <div className="border-l-2 border-[#2D6A4F]/40 pl-4 py-1 max-w-lg">
+          <div className="border-l-2 border-[#9E6B38]/50 pl-4 py-1 max-w-lg">
             <p className="font-serif italic text-sm sm:text-base text-[#233226] leading-snug">
               “Operations is running late three nights a week and it's showing up as sleep loss.”
             </p>
@@ -100,9 +100,9 @@ export function LoginPage() {
         </div>
 
         {/* Right Column: Floating White Sign-in Card */}
-        <div className="flex flex-col items-center lg:items-end lg:col-span-5">
+        <div className="ms-fade-up flex flex-col items-center lg:items-end lg:col-span-5" style={{ animationDelay: '120ms' }}>
           <div className="w-full max-w-[440px]">
-            <div className="rounded-[32px] bg-white p-8 sm:p-10 border border-[#EAE4D9] shadow-[0_30px_60px_-15px_rgba(35,50,38,0.14)] text-slate-900">
+            <div className="rounded-[32px] bg-white p-8 sm:p-10 border border-[#EAE4D9] shadow-[0_30px_60px_-15px_rgba(35,50,38,0.14)] text-slate-900 transition-shadow duration-300 hover:shadow-[0_35px_70px_-15px_rgba(35,50,38,0.2)]">
               <div className="flex items-center justify-between mb-4">
                 <img src="/mindspace-wordmark.png" alt="MindSpace" className="h-6 w-auto object-contain" />
                 <span className="text-[11px] font-medium text-neutral-500">People Leadership</span>

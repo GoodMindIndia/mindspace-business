@@ -217,3 +217,67 @@
     @apply flex items-center justify-center rounded-full bg-ds-tint;
   }
 }
+
+/* ── Marketing-page motion ──────────────────────────────────────────────
+   Scroll-reveal (.ms-reveal, paired with the <Reveal> component) and a
+   couple of ambient loops (floating blobs, a slow pulse ring for the one
+   CTA that should draw the eye). Kept out of @layer so specificity always
+   wins over Tailwind utilities on the same element. Every animation here
+   is skipped under prefers-reduced-motion, live at the bottom. */
+.ms-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.ms-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes ms-float {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-14px, 20px); }
+}
+.ms-float {
+  animation: ms-float 14s ease-in-out infinite;
+}
+.ms-float-slow {
+  animation: ms-float 20s ease-in-out infinite reverse;
+}
+
+@keyframes ms-fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.ms-fade-up {
+  animation: ms-fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes ms-pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(158, 107, 56, 0.35); }
+  70% { box-shadow: 0 0 0 10px rgba(158, 107, 56, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(158, 107, 56, 0); }
+}
+.ms-pulse-ring {
+  animation: ms-pulse-ring 2.6s ease-out infinite;
+}
+
+@keyframes ms-count-tick {
+  from { opacity: 0.3; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.ms-count-tick {
+  animation: ms-count-tick 0.4s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ms-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .ms-float, .ms-float-slow, .ms-fade-up, .ms-pulse-ring, .ms-count-tick {
+    animation: none !important;
+  }
+}

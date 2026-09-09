@@ -6,6 +6,7 @@ import { useTenant } from '@/app/TenantContext';
 import { formatRupees } from '@/admin/charts/chart-theme';
 import { listMyBookings, requestBooking, type EmployeeBooking } from '@/services/booking-service';
 import { SESSION_LABELS_BY_FORMAT } from '@/employee/format-labels';
+import { PageHero, HeroStat } from '@/components/PageHero';
 
 export function BookSessionPage() {
   const { user } = useEmployeeAuth();
@@ -56,13 +57,20 @@ export function BookSessionPage() {
 
   return (
     <div className="flex flex-col gap-8 pb-12">
-      <header className="flex flex-col gap-1.5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#78897B]">PRIVATE · BOOKED FROM YOUR PROFILE</p>
-        <h1 className="font-serif text-3xl sm:text-4xl font-normal tracking-tight text-[#233226] mt-1">Book a session</h1>
-        <p className="max-w-xl text-xs sm:text-sm text-[#56685A] leading-relaxed mt-1">
-          {organization.name} sees a usage count, never your name, your reason, or which slot you booked.
-        </p>
-      </header>
+      <PageHero
+        eyebrow="Confidential therapy"
+        icon={CalendarHeart}
+        tone="green"
+        badge="Fully sponsored"
+        title="Book a session"
+        sub={`${organization.name} sees a usage count, never your name, your reason, or which slot you booked.`}
+        aside={
+          <div className="flex flex-row lg:flex-col gap-3">
+            <HeroStat label="Session" value="45 min" hint="Private video call" />
+            <HeroStat label="Clinicians" value="Licensed" hint="Clinical psychologists" />
+          </div>
+        }
+      />
 
       {confirmed && (
         <div className="rounded-2xl border border-[#B7D3BC] bg-[#EAF3EB] px-4 py-3.5 flex items-start gap-2.5">

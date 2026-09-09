@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { ShieldCheck } from 'lucide-react';
 import { useTenant } from '@/app/TenantContext';
 import { ReportSkeleton } from '@/admin/widgets/PageHeading';
+import { PageHero, HeroStat } from '@/components/PageHero';
+import { LayoutDashboard } from 'lucide-react';
 import { ChartCard } from '@/admin/charts/ChartCard';
 import { StatTile } from '@/admin/charts/StatTile';
 import { RankedBarChart } from '@/admin/charts/RankedBarChart';
@@ -153,24 +155,20 @@ export function ReportPage() {
 
   return (
     <div className="flex flex-col gap-8 pb-12">
-      {/* Header — one line of framing, then straight into the numbers. */}
-      <header className="flex flex-wrap items-start justify-between gap-3">
-        <div className="flex flex-col gap-1.5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#78897B]">
-            {organization.branding.appName.toUpperCase()} · OVERVIEW
-          </p>
-          <h1 className="font-serif text-3xl sm:text-4xl font-normal tracking-tight text-[#233226] mt-1">
-            Your programme, in numbers
-          </h1>
-          <p className="max-w-2xl text-xs sm:text-sm text-[#56685A] leading-relaxed mt-1">
-            Headcounts and rates only, never a name, never an individual score.
-          </p>
-        </div>
-        <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[#B7D3BC] bg-[#EAF3EB] px-3 py-1 text-[11px] font-medium text-[#2F7F4C]">
-          <ShieldCheck className="h-3 w-3" aria-hidden />
-          <span>{liveStats.live ? 'Live counts' : 'Not set up yet'}</span>
-        </span>
-      </header>
+      <PageHero
+        eyebrow={`${organization.branding.appName} · Overview`}
+        icon={LayoutDashboard}
+        tone="green"
+        badge={liveStats.live ? 'Live counts' : 'Not set up yet'}
+        title="Your programme, in numbers"
+        sub="Headcounts and rates only, never a name, never an individual score."
+        aside={
+          <div className="flex flex-row lg:flex-col gap-3">
+            <HeroStat label="People signed up" value={formatCount(liveStats.totalSignups)} hint="active accounts" />
+            <HeroStat label="Check-ins today" value={formatCount(moodToday.total)} hint="anonymous" />
+          </div>
+        }
+      />
 
       {!liveStats.live && (
         <p className="rounded-2xl border border-[#DCD5C8] bg-[#F3EEE5] px-4 py-3 text-[11px] leading-relaxed text-[#9E6B38]">
