@@ -26,7 +26,11 @@ import {
   Star,
   Video,
   ChevronDown,
+  CalendarClock,
 } from 'lucide-react';
+import { Reveal } from '@/components/Reveal';
+import { HeroCollage } from '@/components/product-illustrations';
+import { DemoRequestModal } from '@/components/DemoRequestModal';
 
 const NAV_LINKS = [
   { href: '#platform', label: 'Platform' },
@@ -417,7 +421,13 @@ export function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeHeroTab, setActiveHeroTab] = useState<HeroTabId>('overview');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [demoModalSource, setDemoModalSource] = useState<string | null>(null);
   const ActiveHeroPanel = HERO_PANELS[activeHeroTab];
+
+  function openDemoModal(source: string) {
+    setMobileMenuOpen(false);
+    setDemoModalSource(source);
+  }
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#243327] selection:bg-[#E5ECE6] relative overflow-x-hidden font-sans">
@@ -437,6 +447,15 @@ export function LandingPage() {
           </nav>
 
           <div className="hidden sm:flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => openDemoModal('nav')}
+              className="ms-pulse-ring inline-flex items-center gap-1.5 rounded-lg bg-[#9E6B38] hover:bg-[#835A2E] text-white px-3.5 py-2 text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+            >
+              <CalendarClock className="h-3.5 w-3.5" />
+              <span>Request a Demo</span>
+            </button>
+
             <Link
               to="/app/login"
               className="inline-flex items-center gap-1.5 rounded-lg border border-[#D9D2C5] bg-white px-3.5 py-2 text-xs font-semibold text-[#3E4F42] shadow-xs hover:bg-[#F3EFE8] transition-colors"
@@ -490,10 +509,18 @@ export function LandingPage() {
             </nav>
 
             <div className="mt-4 pt-3 border-t border-[#EAE4D9] flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={() => openDemoModal('nav-mobile')}
+                className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-[#9E6B38] text-white py-2.5 text-xs font-semibold shadow-xs cursor-pointer"
+              >
+                <CalendarClock className="h-3.5 w-3.5" />
+                <span>Request a Demo</span>
+              </button>
               <Link
                 to="/app/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-[#2D6A4F] text-white py-2.5 text-xs font-semibold shadow-xs"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-lg border border-[#D9D2C5] bg-white text-[#3E4F42] py-2.5 text-xs font-semibold shadow-xs"
               >
                 <UserCircle2 className="h-3.5 w-3.5" />
                 <span>Employee Sign In</span>
@@ -508,48 +535,85 @@ export function LandingPage() {
         {/* Ambient glow, subdued */}
         <div
           aria-hidden
-          className="pointer-events-none absolute right-[-10%] top-[-10%] h-[420px] w-[420px] opacity-[0.14] blur-3xl rounded-full"
-          style={{ background: 'radial-gradient(circle, #A100FF 0%, #2D6A4F 55%, transparent 70%)' }}
+          className="ms-float pointer-events-none absolute right-[-10%] top-[-10%] h-[420px] w-[420px] opacity-[0.14] blur-3xl rounded-full"
+          style={{ background: 'radial-gradient(circle, #E8B84B 0%, #2D6A4F 55%, transparent 70%)' }}
         />
 
-        <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#D9D2C5] bg-[#F3EFE8] px-3.5 py-1.5 text-[11px] font-semibold text-[#3E4F42]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#2D6A4F]" />
-            WORKPLACE MENTAL HEALTH INTELLIGENCE
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 grid lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+          {/* Left: the pitch */}
+          <div className="lg:col-span-6 text-center lg:text-left">
+            <div className="ms-fade-up inline-flex items-center gap-2 rounded-full border border-[#D9D2C5] bg-[#F3EFE8] px-3.5 py-1.5 text-[11px] font-semibold text-[#3E4F42]">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#2D6A4F]" />
+              WORKPLACE MENTAL HEALTH INTELLIGENCE
+            </div>
+
+            <h1
+              className="ms-fade-up mt-6 font-serif text-4xl sm:text-6xl lg:text-[3.9rem] font-normal tracking-tight text-[#233226] leading-[1.05]"
+              style={{ animationDelay: '60ms' }}
+            >
+              Know how your people actually feel.
+            </h1>
+
+            <p
+              className="ms-fade-up mt-5 text-sm sm:text-lg leading-relaxed text-[#56685A] max-w-xl mx-auto lg:mx-0"
+              style={{ animationDelay: '120ms' }}
+            >
+              MindSpace turns anonymous check-ins into a plain-English executive report, while employees get unlimited
+              assessments, an AI companion, and ₹500 therapy sessions.
+            </p>
+
+            <div
+              className="ms-fade-up mt-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3"
+              style={{ animationDelay: '180ms' }}
+            >
+              <button
+                type="button"
+                onClick={() => openDemoModal('hero')}
+                className="inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#9E6B38] hover:bg-[#835A2E] text-white px-7 py-3.5 text-sm font-semibold shadow-md transition-all hover:scale-[1.02] cursor-pointer"
+              >
+                <CalendarClock className="h-4 w-4" />
+                <span>Request a Demo</span>
+              </button>
+
+              <Link
+                to="/login"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#2D6A4F] hover:bg-[#234F3B] text-white px-6 py-3.5 text-sm font-semibold shadow-sm transition-all hover:scale-[1.02]"
+              >
+                <Building2 className="h-4 w-4" />
+                <span>HR Dashboard</span>
+              </Link>
+            </div>
+
+            <p
+              className="ms-fade-up mt-4 text-xs text-[#78897B] flex items-center justify-center lg:justify-start gap-1.5"
+              style={{ animationDelay: '240ms' }}
+            >
+              <ShieldCheck className="h-3.5 w-3.5 text-[#2D6A4F]" />
+              <span>
+                Employees sign in{' '}
+                <Link to="/app/login" className="font-semibold text-[#3E4F42] underline underline-offset-2 hover:text-[#233226]">
+                  here
+                </Link>{' '}
+                · Aggregate-only, always
+              </span>
+            </p>
           </div>
 
-          <h1 className="mt-6 font-serif text-4xl sm:text-6xl lg:text-[4.2rem] font-normal tracking-tight text-[#233226] leading-[1.05]">
-            Know how your people
-            <br className="hidden sm:block" /> actually feel.
-          </h1>
-
-          <p className="mt-5 sm:mt-6 text-sm sm:text-lg leading-relaxed text-[#56685A] max-w-2xl mx-auto">
-            MindSpace turns anonymous weekly check-ins into a plain-English executive report,
-            while employees get unlimited assessments, an AI companion, and ₹500 therapy sessions.
-          </p>
-
-          <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 w-full sm:w-auto mx-auto">
-            <Link
-              to="/app/login"
-              className="inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#2D6A4F] hover:bg-[#234F3B] text-white px-7 py-3.5 text-sm font-semibold shadow-md transition-all hover:scale-[1.02]"
-            >
-              <span>Sign In as an Employee</span>
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-
-            <Link
-              to="/login"
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#D9D2C5] bg-white hover:bg-[#F3EFE8] px-6 py-3.5 text-sm font-semibold text-[#3E4F42] shadow-xs transition-colors"
-            >
-              <Building2 className="h-4 w-4 text-[#5A6D5E]" />
-              <span>HR Analytics Dashboard</span>
-            </Link>
+          {/* Right: the three views of a single working day */}
+          <div className="lg:col-span-6">
+            <HeroCollage />
           </div>
+        </div>
 
-          {/* Spec strip */}
-          <div className="mt-10 sm:mt-12 grid grid-cols-2 sm:grid-cols-4 gap-px rounded-2xl border border-[#EAE4D9] bg-[#EAE4D9] overflow-hidden max-w-3xl mx-auto">
-            {SPECS.map((spec) => (
-              <div key={spec.label} className="bg-white px-4 py-4 sm:py-5 text-center">
+        {/* Spec strip */}
+        <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 mt-12 sm:mt-14">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-px rounded-2xl border border-[#EAE4D9] bg-[#EAE4D9] overflow-hidden">
+            {SPECS.map((spec, i) => (
+              <div
+                key={spec.label}
+                className="ms-count-tick bg-white px-4 py-4 sm:py-5 text-center"
+                style={{ animationDelay: `${400 + i * 90}ms` }}
+              >
                 <p className="font-sans text-lg sm:text-2xl font-bold text-[#233226]">{spec.value}</p>
                 <p className="mt-1 text-[10px] sm:text-[11px] text-[#78897B] leading-snug">{spec.label}</p>
               </div>
@@ -638,16 +702,16 @@ export function LandingPage() {
       {/* Bento Features */}
       <section id="platform" className="py-16 sm:py-24">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-xl mb-10 sm:mb-12">
+          <Reveal className="max-w-xl mb-10 sm:mb-12">
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#78897B]">The platform</p>
             <h2 className="font-serif text-2xl sm:text-4xl font-normal tracking-tight text-[#233226] mt-2">
               Everything wellbeing needs, in one console
             </h2>
-          </div>
+          </Reveal>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:grid-rows-2 gap-4 sm:gap-5">
             {/* Large tile */}
-            <div className="lg:col-span-2 lg:row-span-2 rounded-2xl border border-[#EAE4D9] bg-white p-6 sm:p-8 flex flex-col justify-between hover:border-[#2D6A4F]/40 transition-colors">
+            <div className="lg:col-span-2 lg:row-span-2 rounded-2xl border border-[#EAE4D9] bg-white p-6 sm:p-8 flex flex-col justify-between hover:border-[#2D6A4F]/40 hover:-translate-y-1 hover:shadow-[0_20px_45px_-20px_rgba(35,50,38,0.25)] transition-all duration-300">
               <div>
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#2D6A4F] text-white mb-5">
                   <Bot className="h-5 w-5" />
@@ -675,7 +739,7 @@ export function LandingPage() {
             {BENTO_SMALL.map((tile) => (
               <div
                 key={tile.title}
-                className="rounded-2xl border border-[#EAE4D9] bg-white p-5 sm:p-6 flex flex-col justify-between hover:border-[#2D6A4F]/40 transition-colors"
+                className="rounded-2xl border border-[#EAE4D9] bg-white p-5 sm:p-6 flex flex-col justify-between hover:border-[#2D6A4F]/40 hover:-translate-y-1 hover:shadow-[0_20px_45px_-20px_rgba(35,50,38,0.25)] transition-all duration-300"
               >
                 <div>
                   <div
@@ -696,16 +760,16 @@ export function LandingPage() {
       {/* How it works */}
       <section className="py-16 sm:py-24 border-t border-[#EAE4D9] bg-white">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-xl mb-10 sm:mb-14">
+          <Reveal className="max-w-xl mb-10 sm:mb-14">
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#78897B]">How it works</p>
             <h2 className="font-serif text-2xl sm:text-4xl font-normal tracking-tight text-[#233226] mt-2">
               From a 5-minute check-in to an executive briefing
             </h2>
-          </div>
+          </Reveal>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-4 relative">
             {STEPS.map((step, i) => (
-              <div key={step.n} className="relative flex flex-col gap-3">
+              <Reveal key={step.n} delay={i * 100} className="relative flex flex-col gap-3">
                 <div className="flex items-center gap-3">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#2D6A4F] text-white text-xs font-bold">
                     {step.n}
@@ -719,49 +783,68 @@ export function LandingPage() {
                 </div>
                 <h3 className="font-serif text-sm sm:text-base font-normal text-[#233226]">{step.title}</h3>
                 <p className="text-xs leading-relaxed text-[#56685A]">{step.body}</p>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Therapy Section */}
-      <section id="therapy" className="py-16 sm:py-24">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-2xl border border-[#EAE4D9] bg-white p-7 sm:p-10 grid lg:grid-cols-12 gap-8 items-center">
+      {/* Therapy Section — the one section on this page that breaks the
+          white-card-on-cream rhythm every other section follows. Full-bleed,
+          the same eucalyptus gradient already used for the in-app hero
+          banners, so it reads as a deliberate high point rather than a
+          different app — never a card floating in a boxed column. */}
+      <section
+        id="therapy"
+        className="relative overflow-hidden py-16 sm:py-24 text-white"
+        style={{ background: 'linear-gradient(135deg, #2D6A4F 0%, #2A6149 45%, #234F3B 100%)' }}
+      >
+        <div
+          aria-hidden
+          className="ms-float pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full opacity-[0.18] blur-3xl"
+          style={{ background: 'radial-gradient(circle, #E8B84B 0%, #A9CBAE 55%, transparent 75%)' }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -left-16 -bottom-24 h-72 w-72 rounded-full border opacity-[0.12]"
+          style={{ borderColor: '#A9CBAE', borderWidth: 28 }}
+        />
+
+        <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <Reveal className="grid lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-7 flex flex-col gap-4">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F4EBE2] px-3 py-1 text-xs font-semibold text-[#9E6B38] self-start">
-                <HeartHandshake className="h-3.5 w-3.5 text-[#9E6B38]" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur-sm px-3 py-1 text-xs font-semibold text-white self-start">
+                <HeartHandshake className="h-3.5 w-3.5" />
                 CONFIDENTIAL THERAPY NETWORK
               </span>
 
-              <h2 className="font-serif text-2xl sm:text-4xl font-normal tracking-tight text-[#233226] leading-tight">
+              <h2 className="font-serif text-2xl sm:text-4xl font-normal tracking-tight text-white leading-tight">
                 Direct access to licensed psychologists at ₹500/session
               </h2>
 
-              <p className="text-xs sm:text-sm text-[#56685A] leading-relaxed max-w-lg">
+              <p className="text-xs sm:text-sm text-white/75 leading-relaxed max-w-lg">
                 Employees book private sessions from their own account. You only pay for what’s used, no
                 retainer, no minimum commitment.
               </p>
 
               <div className="grid grid-cols-2 gap-3 mt-2">
-                <div className="rounded-xl bg-[#FAF7F2] p-4 border border-[#EAE4D9]">
-                  <p className="font-sans text-lg sm:text-xl font-bold text-[#233226]">₹500</p>
-                  <p className="text-[11px] text-[#78897B] mt-0.5">Pay-as-you-use per employee</p>
+                <div className="rounded-xl bg-white/10 backdrop-blur-sm p-4 border border-white/15">
+                  <p className="font-sans text-lg sm:text-xl font-bold text-white">₹500</p>
+                  <p className="text-[11px] text-white/60 mt-0.5">Pay-as-you-use per employee</p>
                 </div>
 
-                <div className="rounded-xl bg-[#FAF7F2] p-4 border border-[#EAE4D9]">
-                  <p className="font-sans text-lg sm:text-xl font-bold text-[#233226]">100% Privacy</p>
-                  <p className="text-[11px] text-[#78897B] mt-0.5">Zero session logs shared with HR</p>
+                <div className="rounded-xl bg-white/10 backdrop-blur-sm p-4 border border-white/15">
+                  <p className="font-sans text-lg sm:text-xl font-bold text-white">100% Privacy</p>
+                  <p className="text-[11px] text-white/60 mt-0.5">Zero session logs shared with HR</p>
                 </div>
               </div>
             </div>
 
-            <div className="lg:col-span-5 rounded-2xl bg-[#2D6A4F] p-7 text-white flex flex-col justify-between min-h-[220px] relative overflow-hidden">
+            <div className="lg:col-span-5 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 p-7 text-white flex flex-col justify-between min-h-[220px] relative overflow-hidden">
               <div
                 aria-hidden
-                className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full opacity-20 blur-2xl"
-                style={{ background: 'radial-gradient(circle, #A100FF, transparent 70%)' }}
+                className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full opacity-25 blur-2xl"
+                style={{ background: 'radial-gradient(circle, #E8B84B, transparent 70%)' }}
               />
               <div className="relative">
                 <Quote className="h-5 w-5 text-white/40" />
@@ -777,25 +860,26 @@ export function LandingPage() {
                 </span>
               </div>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* Testimonials */}
       <section className="py-16 sm:py-24">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-xl mb-10 sm:mb-14">
+          <Reveal className="max-w-xl mb-10 sm:mb-14">
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#78897B]">What HR teams say</p>
             <h2 className="font-serif text-2xl sm:text-4xl font-normal tracking-tight text-[#233226] mt-2">
               Trusted by people teams who need answers, not dashboards
             </h2>
-          </div>
+          </Reveal>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
-            {TESTIMONIALS.map((t) => (
-              <div
+            {TESTIMONIALS.map((t, i) => (
+              <Reveal
                 key={t.name}
-                className="rounded-2xl border border-[#EAE4D9] bg-white p-6 sm:p-7 flex flex-col justify-between hover:border-[#2D6A4F]/40 transition-colors"
+                delay={i * 100}
+                className="rounded-2xl border border-[#EAE4D9] bg-white p-6 sm:p-7 flex flex-col justify-between hover:border-[#2D6A4F]/40 hover:-translate-y-1 hover:shadow-[0_20px_45px_-20px_rgba(35,50,38,0.25)] transition-all duration-300"
               >
                 <div>
                   <Quote className="h-5 w-5 text-[#C3D0C6]" />
@@ -814,7 +898,7 @@ export function LandingPage() {
                     <p className="text-[11px] text-[#78897B]">{t.context}</p>
                   </div>
                 </div>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -823,16 +907,16 @@ export function LandingPage() {
       {/* Pricing */}
       <section id="pricing" className="py-16 sm:py-24 border-t border-[#EAE4D9] bg-white">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
-          <div className="text-center max-w-xl mx-auto mb-10 sm:mb-14">
+          <Reveal className="text-center max-w-xl mx-auto mb-10 sm:mb-14">
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#78897B]">Simple pricing</p>
             <h2 className="font-serif text-2xl sm:text-4xl font-normal tracking-tight text-[#233226] mt-2">
               Transparent enterprise pricing
             </h2>
-          </div>
+          </Reveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 items-stretch">
             {/* Platform Plan */}
-            <div className="rounded-2xl bg-white p-7 sm:p-8 border-2 border-[#2D6A4F] shadow-sm flex flex-col justify-between relative">
+            <div className="rounded-2xl bg-white p-7 sm:p-8 border-2 border-[#2D6A4F] shadow-sm flex flex-col justify-between relative hover:-translate-y-1 hover:shadow-[0_25px_50px_-20px_rgba(35,50,38,0.3)] transition-all duration-300">
               <span className="absolute -top-3 left-6 rounded-full bg-[#2D6A4F] px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
                 Annual Platform
               </span>
@@ -874,7 +958,7 @@ export function LandingPage() {
             </div>
 
             {/* Therapy Plan */}
-            <div className="rounded-2xl bg-white p-7 sm:p-8 border border-[#EAE4D9] shadow-xs flex flex-col justify-between">
+            <div className="rounded-2xl bg-white p-7 sm:p-8 border border-[#EAE4D9] shadow-xs flex flex-col justify-between hover:-translate-y-1 hover:shadow-[0_20px_45px_-20px_rgba(35,50,38,0.25)] hover:border-[#2D6A4F]/30 transition-all duration-300">
               <div>
                 <h3 className="font-serif text-xl sm:text-2xl font-normal text-[#233226]">1:1 Private Therapy</h3>
                 <p className="text-xs text-[#78897B] mt-0.5">On-demand licensed clinical psychologist support.</p>
@@ -917,12 +1001,12 @@ export function LandingPage() {
       {/* FAQ */}
       <section id="faq" className="py-16 sm:py-24 border-t border-[#EAE4D9] bg-white">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
-          <div className="text-center max-w-xl mx-auto mb-10 sm:mb-14">
+          <Reveal className="text-center max-w-xl mx-auto mb-10 sm:mb-14">
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#78897B]">Questions</p>
             <h2 className="font-serif text-2xl sm:text-4xl font-normal tracking-tight text-[#233226] mt-2">
               Frequently asked questions
             </h2>
-          </div>
+          </Reveal>
 
           <div className="flex flex-col gap-3">
             {FAQS.map((item, i) => {
@@ -962,22 +1046,33 @@ export function LandingPage() {
       {/* Closing CTA band */}
       <section className="relative py-16 sm:py-24">
         <div className="relative mx-auto max-w-3xl px-4 sm:px-6">
-          <div className="relative overflow-hidden rounded-2xl border border-[#EAE4D9] bg-white px-6 py-12 sm:px-14 sm:py-16 text-center shadow-sm">
+          <Reveal className="relative overflow-hidden rounded-2xl border border-[#EAE4D9] bg-white px-6 py-12 sm:px-14 sm:py-16 text-center shadow-sm">
             <div
               aria-hidden
-              className="pointer-events-none absolute left-1/2 top-0 h-[300px] w-[600px] -translate-x-1/2 opacity-[0.1] blur-3xl"
-              style={{ background: 'radial-gradient(ellipse, #A100FF 0%, #2D6A4F 55%, transparent 75%)' }}
+              className="ms-float pointer-events-none absolute left-1/2 top-0 h-[300px] w-[600px] -translate-x-1/2 opacity-[0.12] blur-3xl"
+              style={{ background: 'radial-gradient(ellipse, #E8B84B 0%, #2D6A4F 55%, transparent 75%)' }}
             />
-            <h2 className="relative font-serif text-2xl sm:text-4xl font-normal tracking-tight text-[#233226]">
+            <span className="relative inline-flex items-center gap-1.5 rounded-full bg-[#F4EBE2] px-3 py-1 text-[11px] font-semibold text-[#9E6B38]">
+              Usually a reply within one business day
+            </span>
+            <h2 className="relative mt-4 font-serif text-2xl sm:text-4xl font-normal tracking-tight text-[#233226]">
               Ready to see what your people are really telling you?
             </h2>
             <p className="relative mt-3 text-sm text-[#56685A] max-w-lg mx-auto">
-              Sign in to the HR console for a live walkthrough, or try the employee experience yourself.
+              Request a walkthrough with your own org's data, or sign in if you already have an account.
             </p>
             <div className="relative mt-7 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => openDemoModal('closing-band')}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#9E6B38] hover:bg-[#835A2E] text-white px-6 py-3.5 text-sm font-semibold shadow-md transition-all hover:scale-[1.02] cursor-pointer"
+              >
+                <CalendarClock className="h-4 w-4" />
+                <span>Request a Demo</span>
+              </button>
               <Link
                 to="/login"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#2D6A4F] hover:bg-[#234F3B] text-white px-6 py-3.5 text-sm font-semibold shadow-md transition-all hover:scale-[1.02]"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#D9D2C5] bg-white text-[#3E4F42] hover:bg-[#F3EFE8] px-6 py-3.5 text-sm font-semibold transition-colors"
               >
                 <span>HR Analytics Dashboard</span>
                 <ArrowUpRight className="h-4 w-4" />
@@ -989,27 +1084,66 @@ export function LandingPage() {
                 <span>Sign In as an Employee</span>
               </Link>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="w-full bg-transparent py-10 sm:py-12">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-          <div className="flex items-center gap-3">
-            <img src="/mindspace-wordmark.png" alt="MindSpace" className="h-5 w-auto object-contain" />
+      <footer className="w-full bg-transparent border-t border-[#EAE4D9] py-12 sm:py-14">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-6">
+            <div className="col-span-2 sm:col-span-1">
+              <img src="/mindspace-wordmark.png" alt="MindSpace" className="h-6 w-auto object-contain" />
+              <p className="mt-3 text-xs text-[#78897B] leading-relaxed max-w-[180px]">
+                Anonymous check-ins, turned into a plain-English executive report.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-2.5">
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#9AA79C]">Company</p>
+              <a href="#platform" className="text-xs text-[#56685A] hover:text-[#233226] transition-colors">About the platform</a>
+              <a href="#" className="text-xs text-[#56685A] hover:text-[#233226] transition-colors">Security &amp; privacy</a>
+              <button
+                type="button"
+                onClick={() => openDemoModal('footer')}
+                className="text-left text-xs text-[#56685A] hover:text-[#233226] transition-colors cursor-pointer"
+              >
+                Request a demo
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-2.5">
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#9AA79C]">Legal</p>
+              <a href="#" className="text-xs text-[#56685A] hover:text-[#233226] transition-colors">Privacy Policy</a>
+              <a href="#" className="text-xs text-[#56685A] hover:text-[#233226] transition-colors">Terms of Service</a>
+              <a href="#" className="text-xs text-[#56685A] hover:text-[#233226] transition-colors">Support</a>
+            </div>
+
+            <div className="flex flex-col gap-2.5">
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#9AA79C]">Trust</p>
+              <span className="inline-flex items-center gap-1.5 text-xs text-[#56685A]">
+                <ShieldCheck className="h-3.5 w-3.5 text-[#2D6A4F]" />
+                k ≥ 5 anonymity
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-xs text-[#56685A]">
+                <Lock className="h-3.5 w-3.5 text-[#2D6A4F]" />
+                Encrypted at rest
+              </span>
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-[#78897B]">
-            <a href="#" className="hover:text-[#233226] transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-[#233226] transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-[#233226] transition-colors">Support</a>
+          <div className="mt-10 pt-6 border-t border-[#EAE4D9] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <p className="text-xs text-[#78897B]">© 2026 MindSpace. All rights reserved.</p>
+            <p className="text-xs text-[#9AA79C]">Compliance badges (SOC2 / ISO 27001) shown here once certified.</p>
           </div>
         </div>
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 mt-6 pt-6 border-t border-[#EAE4D9]">
-          <p className="text-xs text-[#78897B]">© 2026 MindSpace. All rights reserved.</p>
-        </div>
       </footer>
+
+      <DemoRequestModal
+        open={demoModalSource !== null}
+        source={demoModalSource ?? 'unknown'}
+        onClose={() => setDemoModalSource(null)}
+      />
     </div>
   );
 }

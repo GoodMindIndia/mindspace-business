@@ -7,6 +7,7 @@ import { listMyAssessments } from '@/services/employee-assessment-service';
 import { getMyMoodToday } from '@/services/mood-checkin-service';
 import { ASSESSMENT_TYPES } from '@/domain/assessments';
 import { MOOD_LABELS, type Mood } from '@/domain/mood';
+import { PageHero } from '@/components/PageHero';
 
 export function ProfilePage() {
   const { user, signOut } = useEmployeeAuth();
@@ -26,10 +27,14 @@ export function ProfilePage() {
 
   return (
     <div className="flex flex-col gap-6 sm:gap-8 pb-12">
-      <header className="flex flex-col gap-1.5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#78897B]">Your Account</p>
-        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[#233226] mt-1">Profile</h1>
-      </header>
+      <PageHero
+        eyebrow="Your account"
+        icon={ShieldCheck}
+        tone="green"
+        badge="Private to you"
+        title={user?.name ? `Hello, ${user.name.split(' ')[0]}` : 'Your profile'}
+        sub="Your activity, your history, and the privacy guarantees that cover all of it."
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-[320px_1fr] gap-6 md:gap-10 items-start">
         {/* Left: account summary, sticky on desktop */}

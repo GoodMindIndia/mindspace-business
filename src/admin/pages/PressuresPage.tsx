@@ -1,6 +1,8 @@
 import { Lightbulb } from 'lucide-react';
 import { useReport } from '@/admin/ReportContext';
 import { ReportSkeleton, NotEnoughAssessmentData } from '@/admin/widgets/PageHeading';
+import { PageHero } from '@/components/PageHero';
+import { AlertTriangle } from 'lucide-react';
 import { MagnitudeBar } from '@/admin/widgets/ProportionBar';
 import { ChartCard } from '@/admin/charts/ChartCard';
 import { StatTile } from '@/admin/charts/StatTile';
@@ -42,19 +44,14 @@ export function PressuresPage() {
 
   return (
     <div className="flex flex-col gap-8 pb-12">
-      {/* Header */}
-      <header className="flex flex-col gap-1.5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#78897B]">
-          WHAT'S WEIGHING · {report.meta.orgName.toUpperCase()}
-        </p>
-        <h1 className="font-serif text-3xl sm:text-4xl font-normal tracking-tight text-[#233226] mt-1">
-          The reasons behind the mood
-        </h1>
-        <p className="max-w-2xl text-xs sm:text-sm text-[#56685A] leading-relaxed mt-1">
-          Ranked by how many people raised each pressure. Reach and urgency are two different questions: a pressure
-          can be everywhere and mild, or narrow and acute.
-        </p>
-      </header>
+      <PageHero
+        eyebrow={`What is weighing · ${report.meta.orgName}`}
+        icon={AlertTriangle}
+        tone="green"
+        badge="Root causes"
+        title="The reasons behind the mood"
+        sub="Ranked by how many people raised each pressure. Reach and urgency are two different questions: a pressure can be everywhere and mild, or narrow and acute."
+      />
 
       {/* ── Key metrics ──────────────────────────────────────────────────── */}
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

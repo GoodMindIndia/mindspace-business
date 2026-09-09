@@ -10,10 +10,14 @@ import {
   Menu,
   X,
   CreditCard,
+  ShieldCheck,
 } from 'lucide-react';
 import { useAuth } from '@/app/AuthContext';
+import { useTenant } from '@/app/TenantContext';
 import { ReportProvider } from '@/admin/ReportContext';
+import { DEFAULT_K_ANONYMITY } from '@/domain/cohorts';
 import { cn } from '@/lib/utils';
+import { AppBackdrop } from '@/components/AppBackdrop';
 
 interface NavEntry {
   to: string;
@@ -44,8 +48,10 @@ export function AdminLayout() {
 
 function AdminLayoutContent() {
   const { user, signOut } = useAuth();
+  const { organization } = useTenant();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const k = organization.policy.kAnonymity || DEFAULT_K_ANONYMITY;
 
   // Close mobile drawer on route change
   useEffect(() => {
@@ -54,11 +60,21 @@ function AdminLayoutContent() {
 
   const sidebarContent = (
     <>
-      {/* Brand */}
-      <div className="flex flex-col gap-2.5 px-5 pt-6 pb-5 border-b border-[#EAE4D9]/60">
+      {/* Brand + which org you're looking at */}
+      <div className="flex flex-col gap-3 px-5 pt-6 pb-5 border-b border-[#EAE4D9]/60">
         <Link to="/" className="flex items-center gap-2">
           <img src="/mindspace-wordmark.png" alt="MindSpace" className="h-6 w-auto object-contain" />
         </Link>
+
+        <div className="flex items-center gap-2 rounded-xl border border-[#EAE4D9] bg-[#FAF7F2] px-2.5 py-2">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-[#2D6A4F] text-[10px] font-bold text-white">
+            {organization.name.slice(0, 1)}
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-[11px] font-semibold text-[#233226] truncate leading-tight">{organization.name}</p>
+            <p className="text-[10px] text-[#78897B] leading-tight">People analytics</p>
+          </div>
+        </div>
       </div>
 
       {/* Nav groups */}
@@ -73,7 +89,7 @@ function AdminLayoutContent() {
         {/* Profile Card */}
         <div className="flex items-center gap-2.5 rounded-xl px-2 py-2 hover:bg-[#FAF7F2] transition-colors">
           <Link to="/admin/profile" className="flex items-center gap-2.5 min-w-0 flex-1">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2D6A4F] text-xs font-semibold text-white shadow-xs">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#2D6A4F] to-[#9E6B38] text-xs font-semibold text-white shadow-xs ring-2 ring-white">
               {user?.name ? user.name.slice(0, 1) : 'P'}
             </span>
             <div className="min-w-0 flex-1">
@@ -95,7 +111,8 @@ function AdminLayoutContent() {
   );
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-[#243327] selection:bg-[#E5ECE6] font-sans">
+    <div className="relative min-h-screen bg-[#FAF7F2] text-[#243327] selection:bg-[#E5ECE6] font-sans">
+      <AppBackdrop />
       {/* Mobile top bar */}
       <div className="md:hidden sticky top-0 z-40 flex h-14 items-center justify-between border-b border-[#EAE4D9]/80 bg-[#FAF7F2]/95 backdrop-blur-md px-4">
         <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
@@ -133,8 +150,32 @@ function AdminLayoutContent() {
 
         {/* Main content */}
         <div className="flex-1 md:pl-64 flex flex-col min-h-screen">
+          {/* Desktop status bar — what you're looking at, how fresh it is, and
+              the privacy floor that's in force. Present on every admin page. */}
+          <div className="hidden md:flex sticky top-0 z-20 h-14 items-center justify-between gap-4 border-b border-[#EAE4D9] bg-[#FAF7F2]/90 backdrop-blur-md px-6 lg:px-8">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E8F0EA] px-2.5 py-1 text-[11px] font-semibold text-[#2D6A4F]">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-[#2F7F4C] opacity-75 animate-ping" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#2F7F4C]" />
+                </span>
+                Live
+              </span>
+              <p className="text-xs text-[#78897B] truncate">
+                {organization.name} · updated {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+              </p>
+            </div>
+
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#EAE4D9] bg-white px-2.5 py-1 text-[11px] font-medium text-[#56685A] shrink-0">
+              <ShieldCheck className="h-3.5 w-3.5 text-[#2D6A4F]" />
+              Aggregate-only · k ≥ {k}
+            </span>
+          </div>
+
           <main className="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8 py-8 sm:py-10 flex-1">
-            <Outlet />
+            <div key={location.pathname} className="ms-fade-up">
+              <Outlet />
+            </div>
           </main>
 
           <footer className="w-full border-t border-[#EAE4D9]/80 bg-transparent py-8">
@@ -163,14 +204,16 @@ function NavGroup({ title, items }: { title: string; items: NavEntry[] }) {
           to={item.to}
           className={({ isActive }) =>
             cn(
-              'flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium transition-colors',
-              isActive ? 'bg-[#2D6A4F] text-white font-semibold' : 'text-[#3E4F42] hover:bg-[#F3EFE8]',
+              'flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium transition-all duration-200',
+              isActive
+                ? 'bg-[#2D6A4F] text-white font-semibold shadow-sm'
+                : 'text-[#3E4F42] hover:bg-[#F3EFE8] hover:translate-x-0.5',
             )
           }
         >
           {({ isActive }) => (
             <>
-              <item.icon className={cn('h-3.5 w-3.5', isActive ? 'text-white' : 'text-[#5A6D5E]')} />
+              <item.icon className={cn('h-3.5 w-3.5 transition-colors', isActive ? 'text-white' : 'text-[#5A6D5E]')} />
               <span>{item.label}</span>
             </>
           )}

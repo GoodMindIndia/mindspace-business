@@ -74,8 +74,13 @@ export function EmployeeDashboardPage() {
   return (
     <div className="flex flex-col gap-8 pb-12 font-sans">
       {/* Top Welcome Hero Banner */}
-      <section className="rounded-3xl bg-[#2D6A4F] p-6 sm:p-10 text-white border border-[#234F3B]">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+      <section className="ms-fade-up relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#2D6A4F] via-[#2A6149] to-[#234F3B] p-6 sm:p-10 text-white border border-[#234F3B] shadow-[0_20px_50px_-24px_rgba(35,50,38,0.5)]">
+        <div
+          aria-hidden
+          className="ms-float pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full opacity-20 blur-2xl"
+          style={{ background: 'radial-gradient(circle, #E8B84B 0%, #A9CBAE 60%, transparent 75%)' }}
+        />
+        <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div className="flex flex-col gap-3 max-w-2xl">
             <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-[#A9CBAE]">
               <HeartHandshake className="h-3.5 w-3.5" />
@@ -135,13 +140,13 @@ export function EmployeeDashboardPage() {
                 disabled={savingMood}
                 onClick={() => pickMood(mood.id)}
                 className={cn(
-                  'flex flex-col items-center gap-2.5 rounded-2xl p-4 border transition-colors cursor-pointer text-center disabled:cursor-wait disabled:opacity-70',
+                  'flex flex-col items-center gap-2.5 rounded-2xl p-4 border transition-all duration-200 cursor-pointer text-center disabled:cursor-wait disabled:opacity-70 hover:-translate-y-0.5',
                   isSelected
-                    ? 'border-[#2D6A4F] bg-[#F4F8F5] text-[#233226]'
-                    : 'border-[#EAE4D9] bg-white hover:bg-[#FAF7F2] text-[#233226]'
+                    ? 'border-[#2D6A4F] bg-[#F4F8F5] text-[#233226] shadow-[0_10px_24px_-14px_rgba(45,106,79,0.7)]'
+                    : 'border-[#EAE4D9] bg-white hover:bg-[#FAF7F2] hover:border-[#C3D0C6] text-[#233226]'
                 )}
               >
-                <div className={cn('flex h-10 w-10 items-center justify-center rounded-full', isSelected ? 'bg-[#2D6A4F] text-white' : 'bg-[#F3EFE8] text-[#4A5B4E]')}>
+                <div className={cn('flex h-10 w-10 items-center justify-center rounded-full transition-colors', isSelected ? 'bg-[#2D6A4F] text-white' : 'bg-[#F3EFE8] text-[#4A5B4E]')}>
                   <Icon className="h-5 w-5" />
                 </div>
                 <span className="text-xs font-semibold">{mood.label}</span>
@@ -178,7 +183,7 @@ export function EmployeeDashboardPage() {
       {/* Main Core Features Hub */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Feature 1: Self-Help & Zen Doodling Sanctuary */}
-        <div className="rounded-2xl bg-white p-6 sm:p-7 border border-[#EAE4D9] flex flex-col justify-between transition-colors hover:border-[#2D6A4F]/40">
+        <div className="rounded-2xl bg-white p-6 sm:p-7 border border-[#EAE4D9] flex flex-col justify-between transition-all duration-300 hover:border-[#2D6A4F]/40 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(35,50,38,0.28)]">
           <div className="flex flex-col gap-4">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F1EAFB] text-[#7C5FA6]">
               <Palette className="h-5 w-5" />
@@ -206,7 +211,7 @@ export function EmployeeDashboardPage() {
         </div>
 
         {/* Feature 2: Tara Voice Companion */}
-        <div className="rounded-2xl bg-white p-6 sm:p-7 border border-[#EAE4D9] flex flex-col justify-between transition-colors hover:border-[#2D6A4F]/40">
+        <div className="rounded-2xl bg-white p-6 sm:p-7 border border-[#EAE4D9] flex flex-col justify-between transition-all duration-300 hover:border-[#2D6A4F]/40 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(35,50,38,0.28)]">
           <div className="flex flex-col gap-4">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#2D6A4F] text-white">
               <MessageCircleHeart className="h-5 w-5" />
@@ -234,7 +239,7 @@ export function EmployeeDashboardPage() {
         </div>
 
         {/* Feature 3: Clinical Self-Assessments */}
-        <div className="rounded-2xl bg-white p-6 sm:p-7 border border-[#EAE4D9] flex flex-col justify-between transition-colors hover:border-[#2D6A4F]/40">
+        <div className="rounded-2xl bg-white p-6 sm:p-7 border border-[#EAE4D9] flex flex-col justify-between transition-all duration-300 hover:border-[#2D6A4F]/40 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(35,50,38,0.28)]">
           <div className="flex flex-col gap-4">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#E6F3F1] text-[#2C8C82]">
               <ClipboardList className="h-5 w-5" />
@@ -262,7 +267,7 @@ export function EmployeeDashboardPage() {
         </div>
 
         {/* Feature 4: 1:1 Confidential Therapy */}
-        <div className="rounded-2xl bg-white p-6 sm:p-7 border border-[#EAE4D9] flex flex-col justify-between transition-colors hover:border-[#2D6A4F]/40">
+        <div className="rounded-2xl bg-white p-6 sm:p-7 border border-[#EAE4D9] flex flex-col justify-between transition-all duration-300 hover:border-[#2D6A4F]/40 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(35,50,38,0.28)]">
           <div className="flex flex-col gap-4">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#FBEAF0] text-[#B5507B]">
               <CalendarHeart className="h-5 w-5" />

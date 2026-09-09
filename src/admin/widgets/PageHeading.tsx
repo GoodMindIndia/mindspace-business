@@ -15,8 +15,11 @@ export function PageHeading({
   return (
     <header className="flex flex-col gap-4 border-b border-border/60 pb-6 sm:flex-row sm:items-end sm:justify-between">
       <div className="max-w-2xl">
-        <p className="text-xs font-medium uppercase tracking-[0.18em] text-ds-mid">{eyebrow}</p>
-        <h1 className="mt-2 text-[1.9rem] font-semibold leading-tight tracking-tight text-ds-base">{title}</h1>
+        <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-ds-mid">
+          <span aria-hidden className="h-3 w-[3px] rounded-full bg-[#2D6A4F]" />
+          {eyebrow}
+        </p>
+        <h1 className="mt-2.5 font-serif text-[2rem] font-normal leading-tight tracking-tight text-ds-base">{title}</h1>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{sub}</p>
       </div>
       {action}
