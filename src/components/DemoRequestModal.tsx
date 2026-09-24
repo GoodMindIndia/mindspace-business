@@ -94,7 +94,7 @@ export function DemoRequestModal({
             </span>
             <h2 className="font-serif text-xl sm:text-2xl font-normal text-[#233226]">Reach us directly</h2>
             <p className="text-sm text-[#56685A] max-w-xs">
-              Our request form is between deploys right now — email us and we'll get back to you within one business
+              Our request form is between deploys right now: email us and we'll get back to you within one business
               day.
             </p>
             <a

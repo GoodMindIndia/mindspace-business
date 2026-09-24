@@ -67,10 +67,18 @@ export async function getOrgDailyMoodSummary(orgId: string, k = 5): Promise<Dail
   const byMoodMap = new Map<Mood, number>();
   let anyLive = false;
 
+  // Pass today's date explicitly, computed client-side (the employee's own
+  // local date, same as saveMoodCheckIn writes) — the database's own
+  // current_date runs in UTC, which reads as "yesterday" for anyone ahead of
+  // UTC until midnight UTC actually passes, and would otherwise miss every
+  // check-in stored under today's real local date.
+  const today = todayDateString();
+
   for (const id of orgIds) {
     try {
       const { data: statsData, error: statsError } = await supabase.rpc('org_daily_checkin_stats', {
         p_org_id: id,
+        p_date: today,
       });
       if (!statsError && statsData) {
         const row = Array.isArray(statsData) ? statsData[0] : statsData;
@@ -82,6 +90,7 @@ export async function getOrgDailyMoodSummary(orgId: string, k = 5): Promise<Dail
 
       const { data: moodData, error: moodError } = await supabase.rpc('org_daily_mood_summary', {
         p_org_id: id,
+        p_date: today,
         p_k: k,
       });
       if (!moodError && moodData) {
