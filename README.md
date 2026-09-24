@@ -55,4 +55,6 @@ npm run typecheck
 
 - **Employee Check-In:** [http://localhost:5174/check-in](http://localhost:5174/check-in)
 - **HR Console:** [http://localhost:5174/admin/report](http://localhost:5174/admin/report)
-  - **Demo Login:** `hr@mindspace.example` / `wellbeing2026`
+  - HR admins sign in with real Supabase Auth email/password, gated by the `hr_admins`
+    table (see `supabase/schema-hr-auth.sql` and `scripts/seed-hr-admin.mjs`). Ask a
+    teammate for credentials — there is no shared demo login anymore.

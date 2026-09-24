@@ -204,9 +204,18 @@ VITE_FIREBASE_AUTH_DOMAIN=
 VITE_FIREBASE_PROJECT_ID=
 ```
 
-### 9.2 Demo HR Login (legacy `AuthContext`, active when real auth isn't configured)
-- `hr@mindspace.example` / `wellbeing2026` (Priya Raghavan, Head of People)
-- `people@mindspace.example` / `wellbeing2026` (Daniel Okafor)
+### 9.2 HR Login
+HR admins authenticate with real Supabase Auth (email/password), gated by the
+`hr_admins` allowlist table — see `supabase/schema-hr-auth.sql`. Having a valid
+Supabase Auth login is not sufficient on its own; only ids present in `hr_admins`
+reach `/admin`. Accounts are created with `scripts/seed-hr-admin.mjs` (needs the
+project's service role key — never commit it, never run it in the browser); use
+`scripts/reset-hr-password.mjs` to change a password directly, since HR accounts
+use placeholder-style emails that don't receive real recovery mail.
+
+`AuthContext.tsx` still has a hardcoded local-only fallback (`DEMO_ACCOUNTS`), but
+it only activates when Supabase isn't configured at all (no `VITE_SUPABASE_URL`)
+— it never applies against a real deployment and grants no access to real data.
 
 Employee accounts use real Google sign-in via Supabase (`/app/login`) — no fixed demo credentials.
 
