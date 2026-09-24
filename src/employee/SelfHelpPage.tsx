@@ -84,7 +84,7 @@ export function SelfHelpPage() {
         tone="green"
         badge="Private & confidential"
         title="How are you feeling right now?"
-        sub="Say it in your own words and we'll match you to a grounding, breathing or doodling exercise — or build one for you on the spot."
+        sub="Say it in your own words and we'll match you to a grounding, breathing or doodling exercise, or build one for you on the spot."
       />
 
       {/* SECTION 1: Top Direct Feeling Check-in */}

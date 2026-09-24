@@ -41,6 +41,11 @@ export function EmployeeDashboardPage() {
   const [selectedMood, setSelectedMood] = useState<Mood | null>(null);
   const [savingMood, setSavingMood] = useState(false);
   const [completedAssessments, setCompletedAssessments] = useState<number>(0);
+  // True when today's check-in was already recorded in an earlier session —
+  // shows a locked "recorded" summary instead of the picker. Clicking
+  // "Change" unlocks it for the rest of this session; reloading re-locks it
+  // if a mood is still on file for today.
+  const [moodLocked, setMoodLocked] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -51,17 +56,18 @@ export function EmployeeDashboardPage() {
       const uniqueTypes = new Set(records.filter((r) => currentDomains.has(r.domain)).map((r) => r.domain));
       setCompletedAssessments(uniqueTypes.size);
     });
-    getMyMoodToday(user.id).then(setSelectedMood);
+    getMyMoodToday(user.id).then((mood) => {
+      setSelectedMood(mood);
+      setMoodLocked(mood !== null);
+    });
   }, [user]);
 
   async function pickMood(mood: Mood) {
     if (!user) return;
-    const next = selectedMood === mood ? null : mood;
-    setSelectedMood(next);
-    if (!next) return; // Picking the same mood again just deselects locally; nothing to unsave server-side.
+    setSelectedMood(mood);
     setSavingMood(true);
     try {
-      await saveMoodCheckIn(user.id, organization.orgId, next);
+      await saveMoodCheckIn(user.id, organization.orgId, mood);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Could not save your check-in.');
     } finally {
@@ -129,31 +135,57 @@ export function EmployeeDashboardPage() {
           <span className="text-xs font-medium text-[#2D6A4F] bg-[#E8F0EA] px-3 py-1 rounded-full">Anonymous</span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-2">
-          {MOODS.map((mood) => {
-            const Icon = mood.icon;
-            const isSelected = selectedMood === mood.id;
+        {moodLocked && selectedMood ? (
+          (() => {
+            const recorded = MOODS.find((m) => m.id === selectedMood)!;
+            const RecordedIcon = recorded.icon;
             return (
-              <button
-                key={mood.id}
-                type="button"
-                disabled={savingMood}
-                onClick={() => pickMood(mood.id)}
-                className={cn(
-                  'flex flex-col items-center gap-2.5 rounded-2xl p-4 border transition-all duration-200 cursor-pointer text-center disabled:cursor-wait disabled:opacity-70 hover:-translate-y-0.5',
-                  isSelected
-                    ? 'border-[#2D6A4F] bg-[#F4F8F5] text-[#233226] shadow-[0_10px_24px_-14px_rgba(45,106,79,0.7)]'
-                    : 'border-[#EAE4D9] bg-white hover:bg-[#FAF7F2] hover:border-[#C3D0C6] text-[#233226]'
-                )}
-              >
-                <div className={cn('flex h-10 w-10 items-center justify-center rounded-full transition-colors', isSelected ? 'bg-[#2D6A4F] text-white' : 'bg-[#F3EFE8] text-[#4A5B4E]')}>
-                  <Icon className="h-5 w-5" />
+              <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#D5E5D8] bg-[#F4F8F5] p-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2D6A4F] text-white shrink-0">
+                    <RecordedIcon className="h-5 w-5" />
+                  </div>
+                  <p className="text-sm text-[#233226]">
+                    You checked in as <strong>{recorded.label}</strong> today.
+                  </p>
                 </div>
-                <span className="text-xs font-semibold">{mood.label}</span>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setMoodLocked(false)}
+                  className="text-xs font-semibold text-[#2D6A4F] hover:text-[#234F3B] underline underline-offset-2 shrink-0"
+                >
+                  Change
+                </button>
+              </div>
             );
-          })}
-        </div>
+          })()
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-2">
+            {MOODS.map((mood) => {
+              const Icon = mood.icon;
+              const isSelected = selectedMood === mood.id;
+              return (
+                <button
+                  key={mood.id}
+                  type="button"
+                  disabled={savingMood}
+                  onClick={() => pickMood(mood.id)}
+                  className={cn(
+                    'flex flex-col items-center gap-2.5 rounded-2xl p-4 border transition-all duration-200 cursor-pointer text-center disabled:cursor-wait disabled:opacity-70 hover:-translate-y-0.5',
+                    isSelected
+                      ? 'border-[#2D6A4F] bg-[#F4F8F5] text-[#233226] shadow-[0_10px_24px_-14px_rgba(45,106,79,0.7)]'
+                      : 'border-[#EAE4D9] bg-white hover:bg-[#FAF7F2] hover:border-[#C3D0C6] text-[#233226]'
+                  )}
+                >
+                  <div className={cn('flex h-10 w-10 items-center justify-center rounded-full transition-colors', isSelected ? 'bg-[#2D6A4F] text-white' : 'bg-[#F3EFE8] text-[#4A5B4E]')}>
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <span className="text-xs font-semibold">{mood.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {selectedMood && (
           <div className="mt-2 rounded-2xl bg-[#F4F8F5] border border-[#D5E5D8] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in">

@@ -201,32 +201,125 @@ export async function updateOrgCreditPlan(
   return updatedBalance;
 }
 
+export interface MemberCreditUsage {
+  memberLabel: string;
+  creditsUsed: number;
+  lastUsedAt: string | null;
+}
+
+export interface OrgCreditUsageByMember {
+  live: boolean;
+  members: MemberCreditUsage[];
+}
+
+/**
+ * Per-employee Tara credit usage, by nickname only — never a name, email, or
+ * user id. See supabase/schema-credit-anonymization.sql for how the nickname
+ * is derived; this just reads what that migration exposes.
+ */
+export async function getOrgCreditUsageByMember(orgId: string): Promise<OrgCreditUsageByMember> {
+  if (!isSupabaseConfigured || !supabase) return { live: false, members: [] };
+
+  try {
+    const { data, error } = await supabase.rpc('org_credit_usage_by_member', { p_org_id: orgId });
+    if (error || !data) return { live: false, members: [] };
+
+    const rows = Array.isArray(data) ? data : [data];
+    const members: MemberCreditUsage[] = rows
+      .map((row: any) => ({
+        memberLabel: row.member_label as string,
+        creditsUsed: row.credits_used as number,
+        lastUsedAt: (row.last_used_at as string) ?? null,
+      }))
+      .sort((a, b) => b.creditsUsed - a.creditsUsed);
+
+    return { live: true, members };
+  } catch (err) {
+    console.warn('[mindspace] org_credit_usage_by_member rpc failed:', err);
+    return { live: false, members: [] };
+  }
+}
+
 export class OutOfCreditsError extends Error {}
 
+/**
+ * Opens a Tara session. Nothing is deducted yet — credits are billed by
+ * actual call duration when the call ends (see endTaraSession). This only
+ * reserves the session and confirms the org has at least 1 credit left to
+ * start with; sessionId must be passed to endTaraSession once the call ends.
+ */
 export async function startTaraSession(
   orgId: string
-): Promise<{ creditsRemaining: number; totalCredits: number } | null> {
+): Promise<{ sessionId: string | null; creditsRemaining: number; totalCredits: number }> {
   const balance = await getOrgCreditBalance(orgId);
   if (balance.creditsRemaining <= 0) {
     throw new OutOfCreditsError('Your organization has used all its Tara credits for this period.');
   }
 
-  const updated: OrgCreditBalance = {
-    ...balance,
-    creditsUsed: balance.creditsUsed + 1,
-    creditsRemaining: Math.max(balance.creditsRemaining - 1, 0),
-  };
-  saveStoredCreditPlan(orgId, updated);
-
   if (isSupabaseConfigured && supabase) {
     try {
-      const { data } = await supabase.rpc('start_tara_session', { p_org_id: orgId });
+      const { data, error } = await supabase.rpc('start_tara_session', { p_org_id: orgId });
+      if (error) throw error;
       const row = Array.isArray(data) ? data[0] : data;
-      if (row) return { creditsRemaining: row.credits_remaining, totalCredits: row.total_credits };
+      if (row) {
+        return {
+          sessionId: row.session_id ?? null,
+          creditsRemaining: row.credits_remaining,
+          totalCredits: row.total_credits,
+        };
+      }
     } catch {
-      // fallback to local updated
+      // fallback to local balance below — no session id means endTaraSession
+      // will skip settlement rather than charge against a session that was
+      // never actually opened server-side.
     }
   }
 
-  return { creditsRemaining: updated.creditsRemaining, totalCredits: updated.totalCredits };
+  return { sessionId: null, creditsRemaining: balance.creditsRemaining, totalCredits: balance.totalCredits };
+}
+
+/**
+ * Settles a Tara session at call end: charges credits for the real
+ * duration (1 per minute, rounded up, minimum 1 for any call that actually
+ * connected — a call that never connected should pass durationSeconds <= 0
+ * so nothing is charged). Updates the local balance cache with the real
+ * result so the UI reflects it immediately, without waiting on a refetch.
+ */
+export async function endTaraSession(
+  orgId: string,
+  sessionId: string | null,
+  durationSeconds: number
+): Promise<{ creditsCharged: number; creditsRemaining: number; totalCredits: number } | null> {
+  if (!sessionId || !isSupabaseConfigured || !supabase) return null;
+
+  try {
+    const { data, error } = await supabase.rpc('end_tara_session', {
+      p_org_id: orgId,
+      p_session_id: sessionId,
+      p_duration_seconds: Math.max(0, Math.round(durationSeconds)),
+    });
+    if (error) throw error;
+    const row = Array.isArray(data) ? data[0] : data;
+    if (!row) return null;
+
+    const result = {
+      creditsCharged: row.credits_charged as number,
+      creditsRemaining: row.credits_remaining as number,
+      totalCredits: row.total_credits as number,
+    };
+
+    const current = getStoredCreditPlan(orgId);
+    if (current) {
+      saveStoredCreditPlan(orgId, {
+        ...current,
+        creditsUsed: Math.max(current.totalCredits - result.creditsRemaining, 0),
+        creditsRemaining: result.creditsRemaining,
+      });
+    }
+
+    return result;
+  } catch (err) {
+    console.warn('[mindspace] end_tara_session rpc failed:', err);
+    return null;
+  }
 }

@@ -14,7 +14,12 @@ import { bandColor } from '@/lib/viz-palette';
 import { ASSESSMENT_TYPES, ASSESSMENT_METADATA, type AssessmentType } from '@/domain/assessments';
 import { DEFAULT_K_ANONYMITY } from '@/domain/cohorts';
 import { getOrgEmployeeStats, type OrgEmployeeStats } from '@/services/org-stats-service';
-import { getOrgCreditBalance, type OrgCreditBalance } from '@/services/credit-service';
+import {
+  getOrgCreditBalance,
+  getOrgCreditUsageByMember,
+  type OrgCreditBalance,
+  type OrgCreditUsageByMember,
+} from '@/services/credit-service';
 import { getOrgDailyMoodSummary, type DailyMoodSummary } from '@/services/mood-checkin-service';
 import { MOOD_LABELS } from '@/domain/mood';
 import {
@@ -54,6 +59,7 @@ export function ReportPage() {
   const [bookings, setBookings] = useState<OrgBookingBreakdown | null>(null);
   const [trend, setTrend] = useState<OrgWeeklyTrend | null>(null);
   const [credits, setCredits] = useState<OrgCreditBalance | null>(null);
+  const [creditUsage, setCreditUsage] = useState<OrgCreditUsageByMember | null>(null);
   const [moodToday, setMoodToday] = useState<DailyMoodSummary | null>(null);
 
   useEffect(() => {
@@ -64,14 +70,16 @@ export function ReportPage() {
       getOrgBookingBreakdown(organization.orgId, k),
       getOrgWeeklyTrend(organization.orgId, 8),
       getOrgCreditBalance(organization.orgId),
+      getOrgCreditUsageByMember(organization.orgId),
       getOrgDailyMoodSummary(organization.orgId, k),
-    ]).then(([stats, assessmentBreakdown, bookingBreakdown, weeklyTrend, creditBalance, dailyMood]) => {
+    ]).then(([stats, assessmentBreakdown, bookingBreakdown, weeklyTrend, creditBalance, creditByMember, dailyMood]) => {
       if (cancelled) return;
       setLiveStats(stats);
       setAssessments(assessmentBreakdown);
       setBookings(bookingBreakdown);
       setTrend(weeklyTrend);
       setCredits(creditBalance);
+      setCreditUsage(creditByMember);
       setMoodToday(dailyMood);
     });
 
@@ -87,7 +95,8 @@ export function ReportPage() {
     };
   }, [organization.orgId, k]);
 
-  if (!liveStats || !assessments || !bookings || !trend || !credits || !moodToday) return <ReportSkeleton />;
+  if (!liveStats || !assessments || !bookings || !trend || !credits || !creditUsage || !moodToday)
+    return <ReportSkeleton />;
 
   // ── Week-over-week movement, for the tile sparklines and deltas ────────────
   const weeks = trend.weeks;
@@ -264,6 +273,39 @@ export function ReportPage() {
           </div>
         )}
         {moodToday.live && moodRows.length > 0 && <RankedBarChart data={moodRows} />}
+      </ChartCard>
+
+      {/* ── Tara credit usage, by member — proves usage is real, stays anonymous ── */}
+      <ChartCard
+        title="Tara credits, by team member"
+        caption="Every employee who has used Tara gets a stable nickname the first time they start a session, never their name. This is how you can see usage is spread across real people, not concentrated in one place, without anyone (including MindSpace) being able to tell who any nickname belongs to."
+        figure={
+          <span className="text-[11px] text-[#78897B]">
+            {creditUsage.members.length} member{creditUsage.members.length === 1 ? '' : 's'} active
+          </span>
+        }
+        table={
+          creditUsage.members.length > 0
+            ? {
+                columns: ['Member', 'Credits used'],
+                rows: creditUsage.members.map((m) => [m.memberLabel, m.creditsUsed]),
+              }
+            : undefined
+        }
+      >
+        <NotLiveNote live={creditUsage.live} schema="schema-credit-anonymization.sql" />
+        {creditUsage.live && creditUsage.members.length === 0 && (
+          <p className="text-[11px] text-[#9AA79C] italic py-2">No one has used Tara yet.</p>
+        )}
+        {creditUsage.live && creditUsage.members.length > 0 && (
+          <RankedBarChart
+            data={creditUsage.members.map((m) => ({
+              label: m.memberLabel,
+              value: m.creditsUsed,
+              display: `${formatCount(m.creditsUsed)} credit${m.creditsUsed === 1 ? '' : 's'}`,
+            }))}
+          />
+        )}
       </ChartCard>
 
       {/* ── Overall severity mix — the one headline shape ────────────────── */}

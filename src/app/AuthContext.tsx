@@ -1,10 +1,12 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { auth, isFirebaseConfigured } from '@/lib/firebase';
+import { isSupabaseConfigured } from '@/lib/supabase';
+import { supabaseHr } from '@/lib/supabase-hr';
 
 export interface HrUser {
   email: string;
   name: string;
   title: string;
+  orgId: string;
 }
 
 interface AuthContextValue {
@@ -19,22 +21,36 @@ interface AuthContextValue {
 
 const SESSION_KEY = 'mindspace.business.hr-session.v1';
 
-/** Demo tenant accounts, used only when no Firebase project is configured.
- * With Firebase wired up these are ignored entirely and the HR console
- * authenticates against Firebase Auth with an hr_admin custom claim. */
+/** Local-dev fallback only, used when no Supabase project is configured at
+ * all (no VITE_SUPABASE_URL/ANON_KEY). Any real deployment authenticates
+ * against Supabase Auth + the hr_admins allowlist below — see
+ * supabase/schema-hr-auth.sql and scripts/seed-hr-admin.mjs. */
 const DEMO_ACCOUNTS: (HrUser & { password: string })[] = [
-  { email: 'hr@mindspace.example', password: 'wellbeing2026', name: 'Priya Raghavan', title: 'Head of People, MindSpace' },
-  { email: 'people@mindspace.example', password: 'wellbeing2026', name: 'Daniel Okafor', title: 'People Operations Lead' },
+  { email: 'hr@mindspace.example', password: 'wellbeing2026', name: 'Priya Raghavan', title: 'Head of People, MindSpace', orgId: 'demo-acme' },
+  { email: 'people@mindspace.example', password: 'wellbeing2026', name: 'Daniel Okafor', title: 'People Operations Lead', orgId: 'demo-acme' },
 ];
 
 export const DEMO_LOGIN_HINT = { email: 'hr@mindspace.example', password: 'wellbeing2026' };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+/** Confirms the signed-in Supabase Auth user is in hr_admins and fetches
+ * their display profile. Returns null for anyone not on the allowlist —
+ * having a valid Supabase Auth login is not, on its own, enough to reach
+ * the HR console. */
+async function loadHrProfile(email: string): Promise<HrUser | null> {
+  if (!supabaseHr) return null;
+  const { data, error } = await supabaseHr.rpc('hr_admin_profile');
+  if (error || !data) return null;
+  const row = Array.isArray(data) ? data[0] : data;
+  if (!row) return null;
+  return { email, name: row.name, title: row.title ?? '', orgId: row.org_id };
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<HrUser | null>(null);
   const [ready, setReady] = useState(false);
-  const isDemoAuth = !isFirebaseConfigured;
+  const isDemoAuth = !isSupabaseConfigured;
 
   useEffect(() => {
     if (isDemoAuth) {
@@ -48,23 +64,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    let unsubscribe: (() => void) | undefined;
     let cancelled = false;
     (async () => {
-      const { onAuthStateChanged } = await import('firebase/auth');
-      if (cancelled || !auth) return;
-      unsubscribe = onAuthStateChanged(auth, (fbUser) => {
-        setUser(
-          fbUser
-            ? { email: fbUser.email ?? '', name: fbUser.displayName ?? fbUser.email ?? 'HR', title: 'People team' }
-            : null,
-        );
+      const { data } = await supabaseHr!.auth.getSession();
+      const email = data.session?.user?.email;
+      const profile = email ? await loadHrProfile(email) : null;
+      if (!cancelled) {
+        setUser(profile);
         setReady(true);
-      });
+      }
     })();
+
+    const { data: subscription } = supabaseHr!.auth.onAuthStateChange(async (_event, session) => {
+      const email = session?.user?.email;
+      setUser(email ? await loadHrProfile(email) : null);
+    });
+
     return () => {
       cancelled = true;
-      unsubscribe?.();
+      subscription.subscription.unsubscribe();
     };
   }, [isDemoAuth]);
 
@@ -81,9 +99,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      const { signInWithEmailAndPassword } = await import('firebase/auth');
-      if (!auth) throw new Error('Authentication is not available.');
-      await signInWithEmailAndPassword(auth, normalized, password);
+      const { data, error } = await supabaseHr!.auth.signInWithPassword({ email: normalized, password });
+      if (error || !data.session) throw new Error(error?.message ?? 'Could not sign you in.');
+
+      const profile = await loadHrProfile(normalized);
+      if (!profile) {
+        await supabaseHr!.auth.signOut();
+        throw new Error('This account is not authorised for HR access.');
+      }
+      setUser(profile);
     },
     [isDemoAuth],
   );
@@ -94,8 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null);
       return;
     }
-    const { signOut: fbSignOut } = await import('firebase/auth');
-    if (auth) await fbSignOut(auth);
+    await supabaseHr!.auth.signOut();
     setUser(null);
   }, [isDemoAuth]);
 
