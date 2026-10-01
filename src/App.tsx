@@ -9,6 +9,7 @@ import { Toaster } from 'sonner';
 import { AdminLayout } from '@/admin/AdminLayout';
 import { BusinessImpactPage } from '@/admin/pages/BusinessImpactPage';
 import { ReportPage } from '@/admin/pages/ReportPage';
+import { CreditUsagePage } from '@/admin/pages/CreditUsagePage';
 import { FeelingsPage } from '@/admin/pages/FeelingsPage';
 import { PressuresPage } from '@/admin/pages/PressuresPage';
 import { ActionsPage } from '@/admin/pages/ActionsPage';
@@ -76,6 +77,7 @@ export default function App() {
                 <Route index element={<Navigate to="report" replace />} />
                 <Route path="impact" element={<BusinessImpactPage />} />
                 <Route path="report" element={<ReportPage />} />
+                <Route path="credits" element={<CreditUsagePage />} />
                 <Route path="feelings" element={<FeelingsPage />} />
                 <Route path="pressures" element={<PressuresPage />} />
                 <Route path="actions" element={<ActionsPage />} />

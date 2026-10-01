@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ShieldCheck } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ShieldCheck, Sparkles, ArrowRight } from 'lucide-react';
 import { useTenant } from '@/app/TenantContext';
 import { ReportSkeleton } from '@/admin/widgets/PageHeading';
 import { PageHero, HeroStat } from '@/components/PageHero';
@@ -14,12 +15,7 @@ import { bandColor } from '@/lib/viz-palette';
 import { ASSESSMENT_TYPES, ASSESSMENT_METADATA, type AssessmentType } from '@/domain/assessments';
 import { DEFAULT_K_ANONYMITY } from '@/domain/cohorts';
 import { getOrgEmployeeStats, type OrgEmployeeStats } from '@/services/org-stats-service';
-import {
-  getOrgCreditBalance,
-  getOrgCreditUsageByMember,
-  type OrgCreditBalance,
-  type OrgCreditUsageByMember,
-} from '@/services/credit-service';
+import { getOrgCreditBalance, type OrgCreditBalance } from '@/services/credit-service';
 import { getOrgDailyMoodSummary, type DailyMoodSummary } from '@/services/mood-checkin-service';
 import { MOOD_LABELS } from '@/domain/mood';
 import {
@@ -59,7 +55,6 @@ export function ReportPage() {
   const [bookings, setBookings] = useState<OrgBookingBreakdown | null>(null);
   const [trend, setTrend] = useState<OrgWeeklyTrend | null>(null);
   const [credits, setCredits] = useState<OrgCreditBalance | null>(null);
-  const [creditUsage, setCreditUsage] = useState<OrgCreditUsageByMember | null>(null);
   const [moodToday, setMoodToday] = useState<DailyMoodSummary | null>(null);
 
   useEffect(() => {
@@ -70,16 +65,14 @@ export function ReportPage() {
       getOrgBookingBreakdown(organization.orgId, k),
       getOrgWeeklyTrend(organization.orgId, 8),
       getOrgCreditBalance(organization.orgId),
-      getOrgCreditUsageByMember(organization.orgId),
       getOrgDailyMoodSummary(organization.orgId, k),
-    ]).then(([stats, assessmentBreakdown, bookingBreakdown, weeklyTrend, creditBalance, creditByMember, dailyMood]) => {
+    ]).then(([stats, assessmentBreakdown, bookingBreakdown, weeklyTrend, creditBalance, dailyMood]) => {
       if (cancelled) return;
       setLiveStats(stats);
       setAssessments(assessmentBreakdown);
       setBookings(bookingBreakdown);
       setTrend(weeklyTrend);
       setCredits(creditBalance);
-      setCreditUsage(creditByMember);
       setMoodToday(dailyMood);
     });
 
@@ -95,7 +88,7 @@ export function ReportPage() {
     };
   }, [organization.orgId, k]);
 
-  if (!liveStats || !assessments || !bookings || !trend || !credits || !creditUsage || !moodToday)
+  if (!liveStats || !assessments || !bookings || !trend || !credits || !moodToday)
     return <ReportSkeleton />;
 
   // ── Week-over-week movement, for the tile sparklines and deltas ────────────
@@ -275,38 +268,29 @@ export function ReportPage() {
         {moodToday.live && moodRows.length > 0 && <RankedBarChart data={moodRows} />}
       </ChartCard>
 
-      {/* ── Tara credit usage, by member — proves usage is real, stays anonymous ── */}
-      <ChartCard
-        title="Tara credits, by team member"
-        caption="Every employee who has used Tara gets a stable nickname the first time they start a session, never their name. This is how you can see usage is spread across real people, not concentrated in one place, without anyone (including MindSpace) being able to tell who any nickname belongs to."
-        figure={
-          <span className="text-[11px] text-[#78897B]">
-            {creditUsage.members.length} member{creditUsage.members.length === 1 ? '' : 's'} active
-          </span>
-        }
-        table={
-          creditUsage.members.length > 0
-            ? {
-                columns: ['Member', 'Credits used'],
-                rows: creditUsage.members.map((m) => [m.memberLabel, m.creditsUsed]),
-              }
-            : undefined
-        }
+      {/* ── Tara credit usage teaser — full per-employee breakdown lives on its own page ── */}
+      <Link
+        to="/admin/credits"
+        className="group flex flex-col gap-3 rounded-3xl border border-[#EAE4D9] bg-white/80 p-5 shadow-[0_1px_0_rgba(35,50,38,0.03)] transition-colors hover:border-[#2D6A4F]/40 sm:flex-row sm:items-center sm:justify-between"
       >
-        <NotLiveNote live={creditUsage.live} schema="schema-credit-anonymization.sql" />
-        {creditUsage.live && creditUsage.members.length === 0 && (
-          <p className="text-[11px] text-[#9AA79C] italic py-2">No one has used Tara yet.</p>
-        )}
-        {creditUsage.live && creditUsage.members.length > 0 && (
-          <RankedBarChart
-            data={creditUsage.members.map((m) => ({
-              label: m.memberLabel,
-              value: m.creditsUsed,
-              display: `${formatCount(m.creditsUsed)} credit${m.creditsUsed === 1 ? '' : 's'}`,
-            }))}
-          />
-        )}
-      </ChartCard>
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#E8F0EA] text-[#2D6A4F]">
+            <Sparkles className="h-4.5 w-4.5" />
+          </span>
+          <div>
+            <p className="text-sm font-semibold text-[#233226]">Tara credits, by team member</p>
+            <p className="text-[11px] text-[#78897B]">
+              {credits.live
+                ? `${formatCount(credits.creditsUsed)} credits used across the org, under anonymous nicknames`
+                : 'Not set up yet'}
+            </p>
+          </div>
+        </div>
+        <span className="flex shrink-0 items-center gap-1 self-start text-xs font-semibold text-[#2D6A4F] sm:self-auto">
+          View full breakdown
+          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+        </span>
+      </Link>
 
       {/* ── Overall severity mix — the one headline shape ────────────────── */}
       <ChartCard

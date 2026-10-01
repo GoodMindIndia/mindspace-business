@@ -11,6 +11,7 @@ import {
   X,
   CreditCard,
   ShieldCheck,
+  Sparkles,
 } from 'lucide-react';
 import { useAuth } from '@/app/AuthContext';
 import { useTenant } from '@/app/TenantContext';
@@ -32,6 +33,7 @@ const REPORT_NAV: NavEntry[] = [
   { to: '/admin/feelings', label: 'Feelings', icon: Smile },
   { to: '/admin/pressures', label: 'Pressures', icon: AlertTriangle },
   { to: '/admin/actions', label: 'Actions', icon: HeartHandshake },
+  { to: '/admin/credits', label: 'Tara Credits', icon: Sparkles },
 ];
 
 const SETTING_NAV: NavEntry[] = [
