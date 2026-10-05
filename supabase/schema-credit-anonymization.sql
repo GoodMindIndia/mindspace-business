@@ -100,7 +100,11 @@ create or replace function public._credit_pseudonym_label(p_user_id uuid, p_org_
 returns text
 language plpgsql
 security definer
-set search_path = public
+-- extensions, not just public: Supabase installs pgcrypto (gen_random_bytes,
+-- used below) into the `extensions` schema, not `public` — without it here
+-- this function fails every time with "function gen_random_bytes(integer)
+-- does not exist", silently (caught by callers' own error handling).
+set search_path = public, extensions
 as $$
 declare
   v_secret bytea;
@@ -116,7 +120,11 @@ begin
 
   select secret into v_secret from public._credit_pseudonym_secret where org_id = p_org_id;
 
-  v_hash := encode(hmac(p_user_id::text, v_secret, 'sha256'), 'hex');
+  -- Cast to bytea, not text: pgcrypto's hmac() only matches when both the
+  -- data and key arguments are the same type (text+text or bytea+bytea) —
+  -- mixing text here with v_secret's bytea fails with "function hmac(text,
+  -- bytea, unknown) does not exist", since neither overload matches mixed types.
+  v_hash := encode(hmac(p_user_id::text::bytea, v_secret, 'sha256'), 'hex');
 
   select label into v_label
   from public.org_credit_pseudonyms
